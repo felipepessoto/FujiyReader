@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -43,7 +44,6 @@ namespace EasyPocket.UWP.UI
         public MainPage()
         {
             this.InitializeComponent();
-            ViewModel = new MainPageViewModel();
             accessToken = (string)localSettings.Values["access_token"];
         }
 
@@ -111,18 +111,106 @@ namespace EasyPocket.UWP.UI
         {
             if (accessToken == null)
             {
-                TblAuthenticating.Visibility = Visibility.Visible;
+                //TblAuthenticating.Visibility = Visibility.Visible;
                 await Auth();
-                TblAuthenticating.Visibility = Visibility.Collapsed;
+                //TblAuthenticating.Visibility = Visibility.Collapsed;
+            }
+        }
+
+
+
+
+
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (ViewModel == null)
+            {
+                ViewModel = new MainPageViewModel();
+
+                PocketClient client = new PocketClient(consumerKey, accessToken);
+                var items = await client.Get();
+
+                foreach (var item in items)
+                {
+                    ViewModel.Articles.Add(item);
+                }
+
+                MasterListView.ItemsSource = items;
             }
 
-            PocketClient client = new PocketClient(consumerKey, accessToken);
-
-            var items = await client.Get();
-
-            foreach (var item in items)
+            if (e.Parameter != null)
             {
-                ViewModel.Articles.Add(item);
+                // Parameter is item ID
+                var id = (string)e.Parameter;
+                ViewModel.LastSelectedItem = ViewModel.Articles.Where((item) => item.ID == id).FirstOrDefault();
+            }
+
+            UpdateForVisualState(AdaptiveStates.CurrentState);
+
+            // Don't play a content transition for first item load.
+            // Sometimes, this content will be animated as part of the page transition.
+            DisableContentTransitions();
+        }
+
+        private void AdaptiveStates_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+            UpdateForVisualState(e.NewState, e.OldState);
+        }
+
+        private void UpdateForVisualState(VisualState newState, VisualState oldState = null)
+        {
+            var isNarrow = newState == NarrowState;
+
+            if (isNarrow && oldState == DefaultState && ViewModel.LastSelectedItem != null)
+            {
+                // Resize down to the detail item. Don't play a transition.
+                Frame.Navigate(typeof(DetailPage), ViewModel.LastSelectedItem.ID, new SuppressNavigationTransitionInfo());
+            }
+
+            EntranceNavigationTransitionInfo.SetIsTargetElement(MasterListView, isNarrow);
+            if (DetailContentPresenter != null)
+            {
+                EntranceNavigationTransitionInfo.SetIsTargetElement(DetailContentPresenter, !isNarrow);
+            }
+        }
+
+        private void MasterListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var clickedItem = (PocketItem)e.ClickedItem;
+            ViewModel.LastSelectedItem = clickedItem;
+
+            if (AdaptiveStates.CurrentState == NarrowState)
+            {
+                // Use "drill in" transition for navigating from master list to detail view
+                Frame.Navigate(typeof(DetailPage), clickedItem.ID, new DrillInNavigationTransitionInfo());
+            }
+            else
+            {
+                // Play a refresh animation when the user switches detail items.
+                EnableContentTransitions();
+            }
+        }
+
+        private void LayoutRoot_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Assure we are displaying the correct item. This is necessary in certain adaptive cases.
+            MasterListView.SelectedItem = ViewModel.LastSelectedItem;
+        }
+
+        private void EnableContentTransitions()
+        {
+            DetailContentPresenter.ContentTransitions.Clear();
+            DetailContentPresenter.ContentTransitions.Add(new EntranceThemeTransition());
+        }
+
+        private void DisableContentTransitions()
+        {
+            if (DetailContentPresenter != null)
+            {
+                DetailContentPresenter.ContentTransitions.Clear();
             }
         }
     }
@@ -135,5 +223,7 @@ namespace EasyPocket.UWP.UI
         }
 
         public ObservableCollection<PocketItem> Articles { get; set; }
+
+        public PocketItem LastSelectedItem { get; set; }
     }
 }

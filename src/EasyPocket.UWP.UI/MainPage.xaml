@@ -6,15 +6,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:pocketsharp="using:PocketSharp.Models"
-    mc:Ignorable="d" Loaded="Page_Loaded">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded"
+    NavigationCacheMode="Enabled"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <!--<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <ListView x:Name="ArticlesList" HorizontalAlignment="Left" Height="500" VerticalAlignment="Top" Width="360" BorderBrush="AliceBlue" BorderThickness="1" ItemsSource="{x:Bind ViewModel.Articles}" Margin="-10,56,0,0">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="pocketsharp:PocketItem">
                     <StackPanel Orientation="Horizontal" Margin="6">
-                        <!--<SymbolIcon Symbol="Audio" Margin="0,0,12,0"/>-->
+                        --><!--<SymbolIcon Symbol="Audio" Margin="0,0,12,0"/>--><!--
                         <StackPanel>
                             <TextBlock Text="{x:Bind Title}" FontWeight="Bold"/>
                             <TextBlock Text="{x:Bind Uri}"/>
@@ -24,5 +27,128 @@
             </ListView.ItemTemplate>
         </ListView>
         <TextBlock x:Name="TblAuthenticating" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Authenticating..."  VerticalAlignment="Top" FontSize="24" Margin="90,56,0,0" Visibility="Collapsed"/>
+    </Grid>-->
+
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Page.Resources>
+        <DataTemplate x:Key="MasterListViewItemTemplate" x:DataType="pocketsharp:PocketItem">
+            <Grid Margin="0,11,0,13">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="{x:Bind Title}" Style="{ThemeResource BaseTextBlockStyle}" />
+
+                <TextBlock
+                    Text="{x:Bind Excerpt}"
+                    Grid.Row="1"
+                    MaxLines="1"
+                    Style="{ThemeResource ListBodyTextBlockStyle}" />
+
+                <TextBlock
+                    Text="{x:Bind AddTime}"
+                    Grid.Column="1"
+                    Margin="12,1,0,0"
+                    Style="{ThemeResource ListCaptionAltTextblockStyle}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DetailContentTemplate" x:DataType="pocketsharp:PocketItem">
+            <StackPanel>
+                <TextBlock
+                    Margin="0,8"
+                    Style="{ThemeResource TitleTextBlockStyle}"
+                    HorizontalAlignment="Left"
+                    Text="{x:Bind Title}"/>
+
+                <TextBlock
+                    Margin="0,9"
+                    HorizontalAlignment="Left"
+                    MaxWidth="560"
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Text="{x:Bind Excerpt}" />
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid x:Name="LayoutRoot" Loaded="LayoutRoot_Loaded">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveStates" CurrentStateChanged="AdaptiveStates_CurrentStateChanged">
+                <VisualState x:Name="DefaultState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="MasterColumn.Width" Value="*" />
+                        <Setter Target="DetailColumn.Width" Value="0" />
+                        <Setter Target="MasterListView.SelectionMode" Value="None" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="MasterColumn" Width="320" />
+            <ColumnDefinition x:Name="DetailColumn" Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            Text="My Items"
+            Margin="12,8,8,8"
+            Style="{ThemeResource TitleTextBlockStyle}" />
+
+        <ListView
+            x:Name="MasterListView"
+            Grid.Row="1"
+            ItemContainerTransitions="{x:Null}"
+            ItemTemplate="{StaticResource MasterListViewItemTemplate}"
+            IsItemClickEnabled="True"
+            ItemClick="MasterListView_ItemClick">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <ContentPresenter
+            x:Name="DetailContentPresenter"
+            Grid.Column="1"
+            Grid.RowSpan="2"
+            BorderThickness="1,0,0,0"
+            Padding="24,0"
+            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+            Content="{x:Bind MasterListView.SelectedItem, Mode=OneWay}"
+            ContentTemplate="{StaticResource DetailContentTemplate}">
+            <ContentPresenter.ContentTransitions>
+                <!-- Empty by default. See MasterListView_ItemClick -->
+                <TransitionCollection />
+            </ContentPresenter.ContentTransitions>
+        </ContentPresenter>
     </Grid>
+
 </Page>
