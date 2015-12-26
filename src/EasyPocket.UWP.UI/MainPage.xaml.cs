@@ -29,8 +29,13 @@ namespace EasyPocket.UWP.UI
     public sealed partial class MainPage : Page
     {
         private const string consumerKey = "49510-2b106efad3cb48ae12eab7f9";
+        //Desktop 49510-2b106efad3cb48ae12eab7f9
+        //Mobile 49510-89dd4b9e7a7314b66f780da3
+
         private static string accessToken;
         private static string accessCode;
+
+        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
         public MainPageViewModel ViewModel { get; set; }
 
@@ -39,6 +44,7 @@ namespace EasyPocket.UWP.UI
         {
             this.InitializeComponent();
             ViewModel = new MainPageViewModel();
+            accessToken = (string)localSettings.Values["access_token"];
         }
 
         public async Task Auth()
@@ -59,8 +65,6 @@ namespace EasyPocket.UWP.UI
 
                 accessCode = contentResponse.Substring(5);
             }
-
-
 
             Uri StartUri = new Uri($"https://getpocket.com/auth/authorize?request_token={accessCode}&redirect_uri={callback}&webauthenticationbroker=1");
 
@@ -83,7 +87,7 @@ namespace EasyPocket.UWP.UI
 
                     var resultValues = ParseQueryString(contentResponse);
 
-                    accessToken = resultValues["access_token"];
+                    localSettings.Values["access_token"] = accessToken = resultValues["access_token"];
                     var username = resultValues["username"];
                 }
             }
@@ -105,7 +109,12 @@ namespace EasyPocket.UWP.UI
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await Auth();
+            if (accessToken == null)
+            {
+                TblAuthenticating.Visibility = Visibility.Visible;
+                await Auth();
+                TblAuthenticating.Visibility = Visibility.Collapsed;
+            }
 
             PocketClient client = new PocketClient(consumerKey, accessToken);
 

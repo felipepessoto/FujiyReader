@@ -23,5 +23,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <TextBlock x:Name="TblAuthenticating" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Authenticating..."  VerticalAlignment="Top" FontSize="24" Margin="90,56,0,0" Visibility="Collapsed"/>
     </Grid>
 </Page>
