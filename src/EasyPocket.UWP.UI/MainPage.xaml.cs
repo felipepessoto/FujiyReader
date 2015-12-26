@@ -1,5 +1,8 @@
-﻿using System;
+﻿using PocketSharp;
+using PocketSharp.Models;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -27,16 +30,20 @@ namespace EasyPocket.UWP.UI
     {
         private const string consumerKey = "49510-2b106efad3cb48ae12eab7f9";
         private static string accessToken;
+        private static string accessCode;
+
+        public MainPageViewModel ViewModel { get; set; }
+
 
         public MainPage()
         {
             this.InitializeComponent();
+            ViewModel = new MainPageViewModel();
         }
 
         public async Task Auth()
         {
             var callback = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString();
-            string code;
 
             using (HttpClient httpClient = new HttpClient())
             {
@@ -50,18 +57,13 @@ namespace EasyPocket.UWP.UI
                 var postResponse = await httpClient.PostAsync("https://getpocket.com/v3/oauth/request", content);
                 var contentResponse = await postResponse.Content.ReadAsStringAsync();
 
-                code = contentResponse.Substring(5);
+                accessCode = contentResponse.Substring(5);
             }
 
 
 
-            Uri StartUri = new Uri($"https://getpocket.com/auth/authorize?request_token={code}&redirect_uri={callback}&webauthenticationbroker=1");
-            Uri EndUri = new Uri(callback);
+            Uri StartUri = new Uri($"https://getpocket.com/auth/authorize?request_token={accessCode}&redirect_uri={callback}&webauthenticationbroker=1");
 
-
-#if WINDOWS_PHONE_APP
-                WebAuthenticationBroker.AuthenticateAndContinue(StartUri, EndUri, null, WebAuthenticationOptions.None);
-#else
             WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri);
             if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
@@ -73,7 +75,7 @@ namespace EasyPocket.UWP.UI
                     var content = new FormUrlEncodedContent(new[]
                 {
                 new KeyValuePair<string, string>("consumer_key", consumerKey),
-                new KeyValuePair<string, string>("code", code)
+                new KeyValuePair<string, string>("code", accessCode)
             });
 
                     var postResponse = await httpClient.PostAsync("https://getpocket.com/v3/oauth/authorize", content);
@@ -93,7 +95,6 @@ namespace EasyPocket.UWP.UI
             {
                 // OutputToken("Error returned by AuthenticateAsync() : " + WebAuthenticationResult.ResponseStatus.ToString());
             }
-#endif
         }
 
         public static Dictionary<string, string> ParseQueryString(string query)
@@ -106,20 +107,24 @@ namespace EasyPocket.UWP.UI
         {
             await Auth();
 
-            using (HttpClient httpClient = new HttpClient())
+            PocketClient client = new PocketClient(consumerKey, accessToken);
+
+            var items = await client.Get();
+
+            foreach (var item in items)
             {
-
-                var content = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("consumer_key", consumerKey),
-                new KeyValuePair<string, string>("access_token", accessToken)
-            });
-
-                var postResponse = await httpClient.PostAsync("https://getpocket.com/v3/get", content);
-                var contentResponse = await postResponse.Content.ReadAsStringAsync();
-
-                
+                ViewModel.Articles.Add(item);
             }
         }
+    }
+
+    public class MainPageViewModel
+    {
+        public MainPageViewModel()
+        {
+            Articles = new ObservableCollection<PocketItem>();
+        }
+
+        public ObservableCollection<PocketItem> Articles { get; set; }
     }
 }
