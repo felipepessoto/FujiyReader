@@ -51,9 +51,12 @@ namespace EasyPocket.UWP.UI
             // Parameter is item ID
             //Item = DetailPageViewModel.FromItem(ItemsDataSource.GetItemById((int)e.Parameter));
 
+            Item = new DetailPageViewModel();
+            Item.Uri = new Uri("about:blank");
+
             var item = await App.PocketClient.Get((string)e.Parameter);
 
-            Item = new DetailPageViewModel() { ID = (string)item.ID, Title= item.Title, Excerpt = item.Excerpt };//TODO implementar
+            Item = new DetailPageViewModel() { ID = item.ID, Title= item.Title, Excerpt = item.Excerpt, Uri = item.Uri };//TODO implementar
 
             var backStack = Frame.BackStack;
             var backStackCount = backStack.Count;

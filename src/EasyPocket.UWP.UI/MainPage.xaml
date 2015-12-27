@@ -46,20 +46,15 @@
         </DataTemplate>
 
         <DataTemplate x:Key="DetailContentTemplate" x:DataType="pocketsharp:PocketItem">
-            <StackPanel>
+            <Grid>
                 <TextBlock
                     Margin="0,8"
                     Style="{ThemeResource TitleTextBlockStyle}"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch" Height="50" VerticalAlignment="Top"
                     Text="{x:Bind Title}"/>
 
-                <TextBlock
-                    Margin="0,9"
-                    HorizontalAlignment="Left"
-                    MaxWidth="560"
-                    Style="{ThemeResource BodyTextBlockStyle}"
-                    Text="{x:Bind Excerpt}" />
-            </StackPanel>
+                <WebView Source="{x:Bind Uri, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Margin="0,50,0,0" />
+            </Grid>
         </DataTemplate>
     </Page.Resources>
 
@@ -97,7 +92,7 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock x:Name="TblAuthenticating" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Authenticating..."  VerticalAlignment="Top" FontSize="24" Margin="90,56,0,0" Visibility="Collapsed"/>
-        
+
         <TextBlock
             Text="My Items"
             Margin="12,8,8,8"

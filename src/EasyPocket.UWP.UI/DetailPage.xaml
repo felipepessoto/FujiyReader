@@ -18,19 +18,24 @@
     </Page.Transitions>
 
     <!-- Don't realize our content by default. See PageRoot_Loaded. -->
-    <StackPanel x:Name="RootPanel" x:DeferLoadStrategy="Lazy">
+    <Grid x:Name="RootPanel" x:DeferLoadStrategy="Lazy">
         <TextBlock
             Margin="8,0"
             Style="{ThemeResource TitleTextBlockStyle}"
-            HorizontalAlignment="Left"
+            HorizontalAlignment="Stretch" Height="50" VerticalAlignment="Top"
             Text="{x:Bind Item.Title, Mode=OneWay}" />
 
-        <TextBlock
+        <WebView Source="{x:Bind Item.Uri, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                 EntranceNavigationTransitionInfo.IsTargetElement="True" Margin="0,50,0,0"
+                 />
+        
+        <!--<TextBlock
             Margin="12,8"
             HorizontalAlignment="Left"
             MaxWidth="560"
             Style="{ThemeResource BodyTextBlockStyle}"
             Text="{x:Bind Item.Excerpt, Mode=OneWay}"
-            EntranceNavigationTransitionInfo.IsTargetElement="True" />
-    </StackPanel>
+            EntranceNavigationTransitionInfo.IsTargetElement="True" />-->
+        
+    </Grid>
 </Page>
