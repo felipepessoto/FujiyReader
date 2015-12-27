@@ -1,4 +1,5 @@
-﻿using PocketSharp;
+﻿using EasyPocket.Core;
+using PocketSharp;
 using PocketSharp.Models;
 using System;
 using System.Collections.Generic;
@@ -29,109 +30,31 @@ namespace EasyPocket.UWP.UI
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private const string consumerKey = "49510-2b106efad3cb48ae12eab7f9";
-        //Desktop 49510-2b106efad3cb48ae12eab7f9
-        //Mobile 49510-89dd4b9e7a7314b66f780da3
-
-        private static string accessToken;
-        private static string accessCode;
-
-        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+        //EasyPocketClient pocketClient;
 
         public MainPageViewModel ViewModel { get; set; }
-
 
         public MainPage()
         {
             this.InitializeComponent();
-            accessToken = (string)localSettings.Values["access_token"];
         }
-
-        public async Task Auth()
-        {
-            var callback = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().ToString();
-
-            using (HttpClient httpClient = new HttpClient())
-            {
-
-                var content = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("consumer_key", consumerKey),
-                new KeyValuePair<string, string>("redirect_uri", callback)
-            });
-
-                var postResponse = await httpClient.PostAsync("https://getpocket.com/v3/oauth/request", content);
-                var contentResponse = await postResponse.Content.ReadAsStringAsync();
-
-                accessCode = contentResponse.Substring(5);
-            }
-
-            Uri StartUri = new Uri($"https://getpocket.com/auth/authorize?request_token={accessCode}&redirect_uri={callback}&webauthenticationbroker=1");
-
-            WebAuthenticationResult WebAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, StartUri);
-            if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
-            {
-                string token = WebAuthenticationResult.ResponseData.ToString();
-
-                using (HttpClient httpClient = new HttpClient())
-                {
-
-                    var content = new FormUrlEncodedContent(new[]
-                {
-                new KeyValuePair<string, string>("consumer_key", consumerKey),
-                new KeyValuePair<string, string>("code", accessCode)
-            });
-
-                    var postResponse = await httpClient.PostAsync("https://getpocket.com/v3/oauth/authorize", content);
-                    var contentResponse = await postResponse.Content.ReadAsStringAsync();
-
-                    var resultValues = ParseQueryString(contentResponse);
-
-                    localSettings.Values["access_token"] = accessToken = resultValues["access_token"];
-                    var username = resultValues["username"];
-                }
-            }
-            else if (WebAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
-            {
-                //Console.WriteLine("HTTP Error returned by AuthenticateAsync() : " + WebAuthenticationResult.ResponseErrorDetail.ToString());
-            }
-            else
-            {
-                // OutputToken("Error returned by AuthenticateAsync() : " + WebAuthenticationResult.ResponseStatus.ToString());
-            }
-        }
-
-        public static Dictionary<string, string> ParseQueryString(string query)
-        {
-            WwwFormUrlDecoder decoder = new WwwFormUrlDecoder(query);
-            return decoder.ToDictionary(x => x.Name, x => x.Value);
-        }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (accessToken == null)
-            {
-                //TblAuthenticating.Visibility = Visibility.Visible;
-                await Auth();
-                //TblAuthenticating.Visibility = Visibility.Collapsed;
-            }
-        }
-
-
-
-
-
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
+            if (App.PocketClient == null)
+            {
+                TblAuthenticating.Visibility = Visibility.Visible;
+              //  pocketClient = await EasyPocketClient.Create();
+                TblAuthenticating.Visibility = Visibility.Collapsed;
+            }
+
             if (ViewModel == null)
             {
                 ViewModel = new MainPageViewModel();
 
-                PocketClient client = new PocketClient(consumerKey, accessToken);
-                var items = await client.Get();
+                var items = await App.PocketClient.Get();
 
                 foreach (var item in items)
                 {

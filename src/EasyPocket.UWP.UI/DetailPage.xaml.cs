@@ -26,9 +26,6 @@ namespace EasyPocket.UWP.UI
     /// </summary>
     public sealed partial class DetailPage : Page
     {
-        private const string consumerKey = "49510-2b106efad3cb48ae12eab7f9";//TODO nao usar duplicado
-        private static string accessToken;//TODO nao usar duplicado
-
         private static DependencyProperty s_itemProperty = DependencyProperty.Register("Item", typeof(PocketItem), typeof(DetailPage), new PropertyMetadata(null));
 
         public static DependencyProperty ItemProperty
@@ -45,7 +42,6 @@ namespace EasyPocket.UWP.UI
         public DetailPage()
         {
             this.InitializeComponent();
-            accessToken = (string)Windows.Storage.ApplicationData.Current.LocalSettings.Values["access_token"];
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -55,8 +51,7 @@ namespace EasyPocket.UWP.UI
             // Parameter is item ID
             //Item = DetailPageViewModel.FromItem(ItemsDataSource.GetItemById((int)e.Parameter));
 
-            PocketClient client = new PocketClient(consumerKey, accessToken);
-            var item = await client.Get((string)e.Parameter);
+            var item = await App.PocketClient.Get((string)e.Parameter);
 
             Item = new DetailPageViewModel() { ID = (string)item.ID, Title= item.Title, Excerpt = item.Excerpt };//TODO implementar
 
