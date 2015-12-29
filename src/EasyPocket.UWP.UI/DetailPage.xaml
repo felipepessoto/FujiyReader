@@ -19,14 +19,22 @@
 
     <!-- Don't realize our content by default. See PageRoot_Loaded. -->
     <Grid x:Name="RootPanel" x:DeferLoadStrategy="Lazy">
-        <TextBlock
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0"
             Margin="8,0"
             Style="{ThemeResource TitleTextBlockStyle}"
-            HorizontalAlignment="Stretch" Height="50" VerticalAlignment="Top"
+            HorizontalAlignment="Stretch" VerticalAlignment="Top"
             Text="{x:Bind Item.Title, Mode=OneWay}" />
 
-        <WebView x:Name="WebContent" local:WebViewHtmlExtension.HTML="{x:Bind Item.Content, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                 EntranceNavigationTransitionInfo.IsTargetElement="True" Margin="0,50,0,0"
+        <WebView Grid.Row="1" Grid.Column="0" x:Name="WebContent" local:WebViewHtmlExtension.HTML="{x:Bind Item.Content, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                 EntranceNavigationTransitionInfo.IsTargetElement="True" Margin="0,0,0,0"
                  />
         
         <!--<TextBlock
