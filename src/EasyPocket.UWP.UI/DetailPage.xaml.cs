@@ -1,19 +1,8 @@
-﻿using PocketSharp;
-using PocketSharp.Models;
+﻿using EasyPocket.Core;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -26,16 +15,16 @@ namespace EasyPocket.UWP.UI
     /// </summary>
     public sealed partial class DetailPage : Page
     {
-        private static DependencyProperty s_itemProperty = DependencyProperty.Register("Item", typeof(PocketItem), typeof(DetailPage), new PropertyMetadata(null));
+        private static DependencyProperty s_itemProperty = DependencyProperty.Register("Item", typeof(PocketItemWithContent), typeof(DetailPage), new PropertyMetadata(null));
 
         public static DependencyProperty ItemProperty
         {
             get { return s_itemProperty; }
         }
 
-        public DetailPageViewModel Item
+        public PocketItemWithContent Item
         {
-            get { return (DetailPageViewModel)GetValue(s_itemProperty); }
+            get { return (PocketItemWithContent)GetValue(s_itemProperty); }
             set { SetValue(s_itemProperty, value); }
         }
 
@@ -49,16 +38,16 @@ namespace EasyPocket.UWP.UI
             base.OnNavigatedTo(e);
 
             // Parameter is item ID
-            //Item = DetailPageViewModel.FromItem(ItemsDataSource.GetItemById((int)e.Parameter));
+            //Item = PocketItemWithContent.FromItem(ItemsDataSource.GetItemById((int)e.Parameter));
 
             if (Item == null)
             {
-                Item = new DetailPageViewModel() { Uri = new Uri("about:blank") };
+                Item = new PocketItemWithContent() { Content = "" };
             }
 
             var item = await App.PocketClient.Get((string)e.Parameter);
-
-            Item = new DetailPageViewModel() { ID = item.ID, Title = item.Title, Excerpt = item.Excerpt, Uri = item.Uri };//TODO implementar
+            
+            Item = await PocketItemWithContent.FromPocketItem(item);
 
             var backStack = Frame.BackStack;
             var backStackCount = backStack.Count;
@@ -162,70 +151,5 @@ namespace EasyPocket.UWP.UI
 
             OnBackRequested();
         }
-    }
-
-
-    public class DetailPageViewModel
-    {
-        
-        public DateTime? AddTime { get; set; }
-        
-        
-        public IEnumerable<PocketAuthor> Authors { get; set; }
-        
-        public string Excerpt { get; set; }
-        
-        public DateTime? FavoriteTime { get; set; }
-        
-        public string FullTitle { get; set; }
-        
-        public bool HasImage { get; }
-        
-        public bool HasVideo { get; }
-        
-        public string ID { get; set; }
-        
-        
-        public IEnumerable<PocketImage> Images { get; set; }
-        
-        public bool IsArchive { get; }
-        
-        public bool IsArticle { get; set; }
-        
-        public bool IsDeleted { get; }
-        
-        public bool IsFavorite { get; set; }
-        
-        public bool IsImage { get; }
-        
-        public bool IsVideo { get; }
-        
-        public string Json { get; set; }
-        
-        public PocketImage LeadImage { get; }
-        
-        public DateTime? ReadTime { get; set; }
-        
-        public string ResolvedId { get; set; }
-        
-        public int Sort { get; set; }
-        
-        public int Status { get; set; }
-        
-        
-        public IEnumerable<PocketTag> Tags { get; set; }
-        
-        public string TagsString { get; }
-        
-        public string Title { get; set; }
-        
-        public DateTime? UpdateTime { get; set; }
-        
-        public Uri Uri { get; set; }
-        
-        
-        public IEnumerable<PocketVideo> Videos { get; set; }
-
-        public int WordCount { get; set; }
     }
 }

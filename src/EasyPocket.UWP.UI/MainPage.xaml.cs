@@ -1,23 +1,8 @@
 ﻿using EasyPocket.Core;
-using PocketSharp;
-using PocketSharp.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Security.Authentication.Web;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -46,7 +31,7 @@ namespace EasyPocket.UWP.UI
             if (App.PocketClient == null)
             {
                 TblAuthenticating.Visibility = Visibility.Visible;
-              //  pocketClient = await EasyPocketClient.Create();
+                //  pocketClient = await EasyPocketClient.Create();
                 TblAuthenticating.Visibility = Visibility.Collapsed;
             }
 
@@ -58,10 +43,11 @@ namespace EasyPocket.UWP.UI
 
                 foreach (var item in items)
                 {
-                    ViewModel.Articles.Add(item);
+                    var itemWithContent = await PocketItemWithContent.FromPocketItem(item);
+                    ViewModel.Articles.Add(itemWithContent);
                 }
 
-                MasterListView.ItemsSource = items;
+                MasterListView.ItemsSource = ViewModel.Articles;
             }
 
             if (e.Parameter != null)
@@ -102,7 +88,7 @@ namespace EasyPocket.UWP.UI
 
         private void MasterListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var clickedItem = (PocketItem)e.ClickedItem;
+            var clickedItem = (PocketItemWithContent)e.ClickedItem;
             ViewModel.LastSelectedItem = clickedItem;
 
             if (AdaptiveStates.CurrentState == NarrowState)
@@ -142,11 +128,11 @@ namespace EasyPocket.UWP.UI
     {
         public MainPageViewModel()
         {
-            Articles = new ObservableCollection<PocketItem>();
+            Articles = new ObservableCollection<PocketItemWithContent>();
         }
 
-        public ObservableCollection<PocketItem> Articles { get; set; }
+        public ObservableCollection<PocketItemWithContent> Articles { get; set; }
 
-        public PocketItem LastSelectedItem { get; set; }
+        public PocketItemWithContent LastSelectedItem { get; set; }
     }
 }
