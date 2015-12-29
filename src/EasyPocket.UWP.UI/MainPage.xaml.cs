@@ -35,14 +35,6 @@ namespace EasyPocket.UWP.UI
                 ViewModel = new MainPageViewModel();
 
                 DetailContentPresenter.DataContext = ViewModel;//TODO como padronizar?
-
-                var items = await App.PocketClient.Get();
-
-                foreach (var item in items)
-                {
-                    var itemWithContent = await PocketItemWithContent.FromPocketItem(item);
-                    ViewModel.Articles.Add(itemWithContent);
-                }
             }
 
             if (e.Parameter != null)
