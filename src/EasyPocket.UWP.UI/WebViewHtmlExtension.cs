@@ -23,7 +23,18 @@ namespace EasyPocket.UWP.UI
             WebView wv = d as WebView;
             if (wv != null)
             {
-                wv.NavigateToString((string)e.NewValue);
+                string content = @"<style>
+    * {
+        max-width: 100%;
+        overflow: auto;        
+    }
+    img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+</style>" + (string)e.NewValue;
+                wv.NavigateToString(content);
             }
         }
 
