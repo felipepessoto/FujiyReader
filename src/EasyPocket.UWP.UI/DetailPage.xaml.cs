@@ -33,7 +33,7 @@ namespace EasyPocket.UWP.UI
             this.InitializeComponent();
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -45,9 +45,8 @@ namespace EasyPocket.UWP.UI
                 Item = new PocketItemWithContent() { Content = "" };
             }
 
-            var item = await App.PocketClient.Get((string)e.Parameter);
-            
-            Item = await PocketItemWithContent.FromPocketItem(item);
+            MainPageViewModel viewModel = (MainPageViewModel)e.Parameter;
+            Item = viewModel.LastSelectedItem;
 
             var backStack = Frame.BackStack;
             var backStackCount = backStack.Count;
@@ -61,7 +60,7 @@ namespace EasyPocket.UWP.UI
                 // will show the correct item in the side-by-side view.
                 var modifiedEntry = new PageStackEntry(
                     masterPageEntry.SourcePageType,
-                    Item.ID,
+                    viewModel,
                     masterPageEntry.NavigationTransitionInfo
                     );
                 backStack.Add(modifiedEntry);

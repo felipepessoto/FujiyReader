@@ -58,7 +58,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid x:Name="LayoutRoot" Loaded="LayoutRoot_Loaded">
+    <Grid x:Name="LayoutRoot">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptiveStates" CurrentStateChanged="AdaptiveStates_CurrentStateChanged">
                 <VisualState x:Name="DefaultState">
@@ -91,8 +91,6 @@
             <ColumnDefinition x:Name="DetailColumn" Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="TblAuthenticating" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Authenticating..."  VerticalAlignment="Top" FontSize="24" Margin="90,56,0,0" Visibility="Collapsed"/>
-
         <TextBlock
             Text="My Items"
             Margin="12,8,8,8"
@@ -104,7 +102,9 @@
             ItemContainerTransitions="{x:Null}"
             ItemTemplate="{StaticResource MasterListViewItemTemplate}"
             IsItemClickEnabled="True"
-            ItemClick="MasterListView_ItemClick">
+            ItemClick="MasterListView_ItemClick"
+            ItemsSource="{x:Bind ViewModel.Articles}"
+            >
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -119,7 +119,7 @@
             BorderThickness="1,0,0,0"
             Padding="24,0"
             BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-            Content="{x:Bind MasterListView.SelectedItem, Mode=OneWay}"
+            Content="{x:Bind ViewModel.LastSelectedItem, Mode=OneWay}"
             ContentTemplate="{StaticResource DetailContentTemplate}">
             <ContentPresenter.ContentTransitions>
                 <!-- Empty by default. See MasterListView_ItemClick -->

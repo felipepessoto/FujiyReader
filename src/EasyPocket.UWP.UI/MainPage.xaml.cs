@@ -1,6 +1,8 @@
 ﻿using EasyPocket.Core;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -28,16 +30,11 @@ namespace EasyPocket.UWP.UI
         {
             base.OnNavigatedTo(e);
 
-            if (App.PocketClient == null)
-            {
-                TblAuthenticating.Visibility = Visibility.Visible;
-                //  pocketClient = await EasyPocketClient.Create();
-                TblAuthenticating.Visibility = Visibility.Collapsed;
-            }
-
             if (ViewModel == null)
             {
                 ViewModel = new MainPageViewModel();
+
+                DetailContentPresenter.DataContext = ViewModel;//TODO como padronizar?
 
                 var items = await App.PocketClient.Get();
 
@@ -46,15 +43,15 @@ namespace EasyPocket.UWP.UI
                     var itemWithContent = await PocketItemWithContent.FromPocketItem(item);
                     ViewModel.Articles.Add(itemWithContent);
                 }
-
-                MasterListView.ItemsSource = ViewModel.Articles;
             }
 
             if (e.Parameter != null)
             {
-                // Parameter is item ID
-                var id = (string)e.Parameter;
-                ViewModel.LastSelectedItem = ViewModel.Articles.Where((item) => item.ID == id).FirstOrDefault();
+                //Não é mais necessário. a ViewModel é compartilhada com o DetailPage
+
+                //// Parameter is item ID
+                //var id = (string)e.Parameter;
+                //ViewModel.LastSelectedItem = ViewModel.Articles.Where((item) => item.ID == id).FirstOrDefault();
             }
 
             UpdateForVisualState(AdaptiveStates.CurrentState);
@@ -76,7 +73,7 @@ namespace EasyPocket.UWP.UI
             if (isNarrow && oldState == DefaultState && ViewModel.LastSelectedItem != null)
             {
                 // Resize down to the detail item. Don't play a transition.
-                Frame.Navigate(typeof(DetailPage), ViewModel.LastSelectedItem.ID, new SuppressNavigationTransitionInfo());
+                Frame.Navigate(typeof(DetailPage), ViewModel, new SuppressNavigationTransitionInfo());
             }
 
             EntranceNavigationTransitionInfo.SetIsTargetElement(MasterListView, isNarrow);
@@ -94,19 +91,13 @@ namespace EasyPocket.UWP.UI
             if (AdaptiveStates.CurrentState == NarrowState)
             {
                 // Use "drill in" transition for navigating from master list to detail view
-                Frame.Navigate(typeof(DetailPage), clickedItem.ID, new DrillInNavigationTransitionInfo());
+                Frame.Navigate(typeof(DetailPage), ViewModel, new DrillInNavigationTransitionInfo());
             }
             else
             {
                 // Play a refresh animation when the user switches detail items.
                 EnableContentTransitions();
             }
-        }
-
-        private void LayoutRoot_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Assure we are displaying the correct item. This is necessary in certain adaptive cases.
-            MasterListView.SelectedItem = ViewModel.LastSelectedItem;
         }
 
         private void EnableContentTransitions()
@@ -124,7 +115,7 @@ namespace EasyPocket.UWP.UI
         }
     }
 
-    public class MainPageViewModel
+    public class MainPageViewModel : INotifyPropertyChanged
     {
         public MainPageViewModel()
         {
@@ -133,6 +124,28 @@ namespace EasyPocket.UWP.UI
 
         public ObservableCollection<PocketItemWithContent> Articles { get; set; }
 
-        public PocketItemWithContent LastSelectedItem { get; set; }
+
+        private PocketItemWithContent lastSelectedItem;
+
+        public PocketItemWithContent LastSelectedItem
+        {
+            get { return lastSelectedItem; }
+            set
+            {
+                lastSelectedItem = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged([CallerMemberName] string caller = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(caller));
+            }
+        }
     }
 }

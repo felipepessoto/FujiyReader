@@ -1,4 +1,5 @@
 ﻿using PocketSharp.Models;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -10,13 +11,22 @@ namespace EasyPocket.Core
 
         public static async Task<PocketItemWithContent> FromPocketItem(PocketItem item)
         {
-            string content;
-            using (HttpClient httpClient = new HttpClient())
+            string content = "Error to load the article :(";
+
+            try
             {
-                content = await httpClient.GetStringAsync(item.Uri);
+                using (HttpClient httpClient = new HttpClient())
+                {
+                    content = await httpClient.GetStringAsync(item.Uri);
+                }
+                content = Html2Article.GetArticle(content).ContentWithTags;
+            }
+            catch (Exception)
+            {
+                content = "Error to load the article :(";
             }
 
-            content = Html2Article.GetArticle(content).ContentWithTags;
+
 
             return new PocketItemWithContent
             {
