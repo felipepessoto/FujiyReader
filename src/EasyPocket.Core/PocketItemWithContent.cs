@@ -1,13 +1,26 @@
 ﻿using PocketSharp.Models;
 using System;
+using System.ComponentModel;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace EasyPocket.Core
 {
     public class PocketItemWithContent : PocketItem
     {
-        public string Content { get; set; }
+        private string content;
+
+        public string Content
+        {
+            get { return content; }
+            set
+            {
+                content = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public static async Task<PocketItemWithContent> FromPocketItem(PocketItem item)
         {
@@ -36,6 +49,12 @@ namespace EasyPocket.Core
                 Uri = item.Uri,
                 Content = content,
             };
+        }
+
+
+        public override void OnPropertyChanged([CallerMemberName] string caller = "")
+        {
+            base.OnPropertyChanged(caller);
         }
     }
 }
