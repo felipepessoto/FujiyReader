@@ -66,11 +66,15 @@ namespace EasyPocket.UWP.UI
 
             foreach (var item in itemsWithContent)
             {
-                item.PropertyChanged += Item_PropertyChanged;
                 Articles.Add(item);
             }
 
             await SaveToLocalStorage();
+
+            foreach (var item in itemsWithContent)
+            {
+                item.PropertyChanged += Item_PropertyChanged;
+            }
         }
 
         static SemaphoreSlim semaphoreQueue = new SemaphoreSlim(2, 2);
@@ -90,7 +94,6 @@ namespace EasyPocket.UWP.UI
                             try
                             {
                                 await SaveToLocalStorage();
-                                await Task.Delay(3000);
                             }
                             finally
                             {

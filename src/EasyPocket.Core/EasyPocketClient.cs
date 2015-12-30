@@ -141,17 +141,17 @@ namespace EasyPocket.Core
 
         public async Task SetLocalStorageItems(IEnumerable<PocketItemWithContent> value)
         {
-            using (var stream = await localCacheFolder.OpenStreamForWriteAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting))
-            using (var streamWriter = new StreamWriter(stream))
-            using (JsonTextWriter jsonwriter = new JsonTextWriter(streamWriter))
-            {
-                var serializer = new JsonSerializer();
-                serializer.Serialize(jsonwriter, value);
-            }
+            //using (var stream = await localCacheFolder.OpenStreamForWriteAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting))
+            //using (var streamWriter = new StreamWriter(stream))
+            //using (JsonTextWriter jsonwriter = new JsonTextWriter(streamWriter))
+            //{
+            //    var serializer = new JsonSerializer();
+            //    serializer.Serialize(jsonwriter, value);
+            //}
 
-            //var jsonValue = JsonConvert.SerializeObject(value);
-            //var localPocketCacheFile = await localCacheFolder.CreateFileAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting);
-            //await FileIO.WriteTextAsync(localPocketCacheFile, jsonValue);
+            var jsonValue = JsonConvert.SerializeObject(value);
+            var localPocketCacheFile = await localCacheFolder.CreateFileAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteTextAsync(localPocketCacheFile, jsonValue);
         }
 
         public Task<IEnumerable<PocketItem>> Get(RetrieveFilter filter, CancellationToken cancellationToken = default(CancellationToken))
