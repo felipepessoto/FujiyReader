@@ -22,34 +22,37 @@ namespace EasyPocket.Core
             }
         }
 
-
-        public static async Task<PocketItemWithContent> FromPocketItem(PocketItem item)
+        private static async Task LoadContent(PocketItemWithContent item)
         {
-            string content = "Error to load the article :(";
-
+            string content;
             try
             {
                 using (HttpClient httpClient = new HttpClient(new RetryDelegatingHandler()))
                 {
                     content = await httpClient.GetStringAsync(item.Uri);
                 }
-                content = Html2Article.GetArticle(content).ContentWithTags;
+                item.Content = Html2Article.GetArticle(content).ContentWithTags;
             }
             catch (Exception)
             {
-                content = "Error to load the article :(";
+                //content = "Error to load the article :(";
             }
+        }
 
 
-
-            return new PocketItemWithContent
+        public static PocketItemWithContent FromPocketItem(PocketItem item)
+        {
+            var itemWithContent = new PocketItemWithContent
             {
                 ID = item.ID,
                 Title = item.Title,
                 Excerpt = item.Excerpt,
                 Uri = item.Uri,
-                Content = content,
             };
+
+            LoadContent(itemWithContent);
+
+            return itemWithContent;
         }
 
 

@@ -1,8 +1,10 @@
 ﻿using EasyPocket.Core;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyPocket.UWP.UI
@@ -19,10 +21,7 @@ namespace EasyPocket.UWP.UI
             }
         }
 
-        private MainPageViewModel()
-        {
-            
-        }
+        private MainPageViewModel() { }
 
         public static async Task<MainPageViewModel> Create()
         {
@@ -41,7 +40,6 @@ namespace EasyPocket.UWP.UI
 
         public ObservableCollection<PocketItemWithContent> Articles { get; set; }
 
-
         private PocketItemWithContent lastSelectedItem;
 
         public PocketItemWithContent LastSelectedItem
@@ -56,27 +54,61 @@ namespace EasyPocket.UWP.UI
 
         public async Task Sync()
         {
-            var items = (await App.PocketClient.Get()).ToArray();
-
-            PocketItemWithContent[] itemsWithContent = new PocketItemWithContent[items.Length];
-            Task<PocketItemWithContent>[] tasks = new Task<PocketItemWithContent>[items.Length];
-
-            for (int i = 0; i < items.Length; i++)
-            {
-                tasks[i] = PocketItemWithContent.FromPocketItem(items[i]);
-            }
-
-            await Task.WhenAll(tasks);
+            //TODO Necessario?
+            //foreach (var item in Articles)
+            //{
+            //    item.PropertyChanged -= Item_PropertyChanged;
+            //}
 
             Articles.Clear();
 
-            for (int i = 0; i < tasks.Length; i++)
+            var itemsWithContent = (await App.PocketClient.Get()).Select(PocketItemWithContent.FromPocketItem).ToList();
+
+            foreach (var item in itemsWithContent)
             {
-                itemsWithContent[i] = tasks[i].Result;
-                Articles.Add(tasks[i].Result);
+                item.PropertyChanged += Item_PropertyChanged;
+                Articles.Add(item);
             }
 
-            await App.PocketClient.SetLocalStorageItems(itemsWithContent);
+            await SaveToLocalStorage();
+        }
+
+        static SemaphoreSlim semaphoreQueue = new SemaphoreSlim(2, 2);
+        static SemaphoreSlim semaphoreLock = new SemaphoreSlim(1, 1);
+
+        private async void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            //TODO fazer throttle
+            if (e.PropertyName == "Content")
+            {
+                if (await semaphoreQueue.WaitAsync(0))
+                {
+                    try
+                    {
+                        if (await semaphoreLock.WaitAsync(TimeSpan.FromSeconds(10)))
+                        {
+                            try
+                            {
+                                await SaveToLocalStorage();
+                                await Task.Delay(3000);
+                            }
+                            finally
+                            {
+                                semaphoreLock.Release();
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        semaphoreQueue.Release();
+                    }
+                }
+            }
+        }
+
+        public async Task SaveToLocalStorage()
+        {
+            await App.PocketClient.SetLocalStorageItems(Articles);
         }
     }
 }

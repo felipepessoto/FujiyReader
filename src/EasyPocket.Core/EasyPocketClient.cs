@@ -127,21 +127,23 @@ namespace EasyPocket.Core
 
         public async Task<IEnumerable<PocketItemWithContent>> GetLocalStorageItems()
         {
+            IEnumerable<PocketItemWithContent> content = null;
             if (await localCacheFolder.TryGetItemAsync("Local_PocketItemWithContent") != null)
             {
                 using (var stream = new JsonTextReader(new StreamReader(await localCacheFolder.OpenStreamForReadAsync("Local_PocketItemWithContent"))))
                 {
-                    IEnumerable<PocketItemWithContent> content = new JsonSerializer().Deserialize<IEnumerable<PocketItemWithContent>>(stream);
-                    return content;
+                    content = new JsonSerializer().Deserialize<IEnumerable<PocketItemWithContent>>(stream);
                 }
             }
 
-            return Enumerable.Empty<PocketItemWithContent>();
+            return content ?? Enumerable.Empty<PocketItemWithContent>();
         }
 
         public async Task SetLocalStorageItems(IEnumerable<PocketItemWithContent> value)
         {
-            using (JsonTextWriter jsonwriter = new JsonTextWriter(new StreamWriter(await localCacheFolder.OpenStreamForWriteAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting))))
+            using (var stream = await localCacheFolder.OpenStreamForWriteAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting))
+            using (var streamWriter = new StreamWriter(stream))
+            using (JsonTextWriter jsonwriter = new JsonTextWriter(streamWriter))
             {
                 var serializer = new JsonSerializer();
                 serializer.Serialize(jsonwriter, value);
