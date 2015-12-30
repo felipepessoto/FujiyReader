@@ -1,7 +1,9 @@
-﻿using PocketSharp;
+﻿using Newtonsoft.Json;
+using PocketSharp;
 using PocketSharp.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -9,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Security.Authentication.Web;
+using Windows.Storage;
 
 namespace EasyPocket.Core
 {
@@ -44,6 +47,7 @@ namespace EasyPocket.Core
         }
 
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+        Windows.Storage.StorageFolder localCacheFolder = Windows.Storage.ApplicationData.Current.LocalCacheFolder;
 
         private EasyPocketClient() { }
 
@@ -119,6 +123,33 @@ namespace EasyPocket.Core
             {
                 //TODO OutputToken("Error returned by AuthenticateAsync() : " + WebAuthenticationResult.ResponseStatus.ToString());
             }
+        }
+
+        public IEnumerable<PocketItemWithContent> GetLocalStorageItems()
+        {
+            if (localCacheFolder.TryGetItemAsync("Local_PocketItemWithContent").GetResults() != null)
+            {
+                using (var stream = new JsonTextReader(new StreamReader(localCacheFolder.OpenStreamForReadAsync("Local_PocketItemWithContent").Result)))
+                {
+                    IEnumerable<PocketItemWithContent> content = new JsonSerializer().Deserialize<IEnumerable<PocketItemWithContent>>(stream);
+                    return content;
+                }
+            }
+
+            return Enumerable.Empty<PocketItemWithContent>();
+        }
+
+        public async Task SetLocalStorageItems(IEnumerable<PocketItemWithContent> value)
+        {
+            using (JsonTextWriter jsonwriter = new JsonTextWriter(new StreamWriter(await localCacheFolder.OpenStreamForWriteAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting))))
+            {
+                var serializer = new JsonSerializer();
+                serializer.Serialize(jsonwriter, value);
+            }
+
+            //var jsonValue = JsonConvert.SerializeObject(value);
+            //var localPocketCacheFile = await localCacheFolder.CreateFileAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting);
+            //await FileIO.WriteTextAsync(localPocketCacheFile, jsonValue);
         }
 
         public Task<IEnumerable<PocketItem>> Get(RetrieveFilter filter, CancellationToken cancellationToken = default(CancellationToken))
