@@ -125,11 +125,11 @@ namespace EasyPocket.Core
             }
         }
 
-        public IEnumerable<PocketItemWithContent> GetLocalStorageItems()
+        public async Task<IEnumerable<PocketItemWithContent>> GetLocalStorageItems()
         {
-            if (localCacheFolder.TryGetItemAsync("Local_PocketItemWithContent").GetResults() != null)
+            if (await localCacheFolder.TryGetItemAsync("Local_PocketItemWithContent") != null)
             {
-                using (var stream = new JsonTextReader(new StreamReader(localCacheFolder.OpenStreamForReadAsync("Local_PocketItemWithContent").Result)))
+                using (var stream = new JsonTextReader(new StreamReader(await localCacheFolder.OpenStreamForReadAsync("Local_PocketItemWithContent"))))
                 {
                     IEnumerable<PocketItemWithContent> content = new JsonSerializer().Deserialize<IEnumerable<PocketItemWithContent>>(stream);
                     return content;

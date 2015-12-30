@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyPocket.Core
@@ -28,7 +29,7 @@ namespace EasyPocket.Core
 
             try
             {
-                using (HttpClient httpClient = new HttpClient())
+                using (HttpClient httpClient = new HttpClient(new RetryDelegatingHandler()))
                 {
                     content = await httpClient.GetStringAsync(item.Uri);
                 }
@@ -55,6 +56,41 @@ namespace EasyPocket.Core
         public override void OnPropertyChanged([CallerMemberName] string caller = "")
         {
             base.OnPropertyChanged(caller);
+        }
+    }
+
+    public class RetryDelegatingHandler : DelegatingHandler
+    {
+        public int MaxRetries { get; set; } = 3;
+
+
+        public RetryDelegatingHandler() : this(new HttpClientHandler())
+        { }
+
+        public RetryDelegatingHandler(HttpMessageHandler innerHandler)
+            : base(innerHandler)
+        {
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            HttpResponseMessage response;
+
+            int i = 0;
+            do
+            {
+                try
+                {
+                    response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+                    return response;
+                }
+                catch (Exception ex) when (i<= MaxRetries)
+                {
+
+                }
+
+                i++;
+            } while (true);
         }
     }
 }

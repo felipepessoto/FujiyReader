@@ -32,7 +32,7 @@ namespace EasyPocket.UWP.UI
 
             if (ViewModel == null)
             {
-                ViewModel = new MainPageViewModel();
+                ViewModel = await MainPageViewModel.Create();
 
                 DetailContentPresenter.DataContext = ViewModel;//TODO como padronizar?
             }

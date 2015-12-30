@@ -19,9 +19,24 @@ namespace EasyPocket.UWP.UI
             }
         }
 
-        public MainPageViewModel()
+        private MainPageViewModel()
         {
-            Articles = new ObservableCollection<PocketItemWithContent>(App.PocketClient.GetLocalStorageItems());
+            
+        }
+
+        public static async Task<MainPageViewModel> Create()
+        {
+            var mainPageViewModel = new MainPageViewModel();
+
+            await mainPageViewModel.Initialize();
+
+            return mainPageViewModel;
+        }
+
+        private async Task Initialize()
+        {
+            var localItems = await App.PocketClient.GetLocalStorageItems();
+            Articles = new ObservableCollection<PocketItemWithContent>(localItems);
         }
 
         public ObservableCollection<PocketItemWithContent> Articles { get; set; }
