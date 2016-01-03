@@ -4,10 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -110,6 +114,14 @@ namespace EasyPocket.UWP.UI
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        {
+            var rootFrame = new Frame();
+            rootFrame.Navigate(typeof(ShareTarget), args.ShareOperation);
+            Window.Current.Content = rootFrame;
+            Window.Current.Activate();
         }
     }
 }

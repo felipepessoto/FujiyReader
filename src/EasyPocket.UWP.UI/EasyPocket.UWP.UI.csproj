@@ -108,6 +108,9 @@
     </Compile>
     <Compile Include="MainPageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShareTarget.xaml.cs">
+      <DependentUpon>ShareTarget.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WebViewHtmlExtension.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +142,10 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ShareTarget.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

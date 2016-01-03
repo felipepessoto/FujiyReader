@@ -169,6 +169,11 @@ namespace EasyPocket.Core
             return client.Get(state, favorite, tag, contentType, sort, search, domain, since, count, offset, cancellationToken);
         }
 
+        public Task Add(Uri uri)
+        {
+            return client.Add(uri);
+        }
+
         private static Dictionary<string, string> ParseQueryString(string query)
         {
             WwwFormUrlDecoder decoder = new WwwFormUrlDecoder(query);
