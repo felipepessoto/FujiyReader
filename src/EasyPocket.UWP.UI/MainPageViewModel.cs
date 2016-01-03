@@ -52,28 +52,48 @@ namespace EasyPocket.UWP.UI
             }
         }
 
+        private bool canSync = true;
+        public bool CanSync
+        {
+            get { return canSync; }
+            set
+            {
+                canSync = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public async Task Sync()
         {
-            //TODO Necessario?
-            //foreach (var item in Articles)
-            //{
-            //    item.PropertyChanged -= Item_PropertyChanged;
-            //}
+            CanSync = false;
 
-            Articles.Clear();
-
-            var itemsWithContent = (await App.PocketClient.Get()).Select(PocketItemWithContent.FromPocketItem).ToList();
-
-            foreach (var item in itemsWithContent)
+            try
             {
-                Articles.Add(item);
+                //TODO Necessario?
+                //foreach (var item in Articles)
+                //{
+                //    item.PropertyChanged -= Item_PropertyChanged;
+                //}
+
+                Articles.Clear();
+
+                var itemsWithContent = (await App.PocketClient.Get()).Select(PocketItemWithContent.FromPocketItem).ToList();
+
+                foreach (var item in itemsWithContent)
+                {
+                    Articles.Add(item);
+                }
+
+                await SaveToLocalStorage();
+
+                foreach (var item in itemsWithContent)
+                {
+                    item.PropertyChanged += Item_PropertyChanged;
+                }
             }
-
-            await SaveToLocalStorage();
-
-            foreach (var item in itemsWithContent)
+            finally
             {
-                item.PropertyChanged += Item_PropertyChanged;
+                CanSync = true;
             }
         }
 

@@ -64,7 +64,7 @@
                 <Grid/>
             </CommandBar.Content>
             <AppBarButton Icon="Add" Label="Add"/>
-            <AppBarButton Icon="Sync" Label="Sync" Click="{x:Bind ViewModel.Sync}" />
+            <AppBarButton Icon="Sync" Label="Sync" Click="{x:Bind ViewModel.Sync}" IsEnabled="{x:Bind ViewModel.CanSync, Mode=OneWay}" />
         </CommandBar>
     </Page.BottomAppBar>
     
