@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -47,7 +48,7 @@ namespace EasyPocket.Core
         }
 
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-        Windows.Storage.StorageFolder localCacheFolder = Windows.Storage.ApplicationData.Current.LocalCacheFolder;
+        Windows.Storage.StorageFolder localCacheFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 
         private EasyPocketClient() { }
 
@@ -125,33 +126,18 @@ namespace EasyPocket.Core
             }
         }
 
+        const string Local_PocketItemWithContent = "Local_PocketItemWithContent";
+
         public async Task<IEnumerable<PocketItemWithContent>> GetLocalStorageItems()
         {
-            IEnumerable<PocketItemWithContent> content = null;
-            if (await localCacheFolder.TryGetItemAsync("Local_PocketItemWithContent") != null)
-            {
-                using (var stream = new JsonTextReader(new StreamReader(await localCacheFolder.OpenStreamForReadAsync("Local_PocketItemWithContent"))))
-                {
-                    content = new JsonSerializer().Deserialize<IEnumerable<PocketItemWithContent>>(stream);
-                }
-            }
+            IEnumerable<PocketItemWithContent> content = await ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent);
 
             return content ?? Enumerable.Empty<PocketItemWithContent>();
         }
 
-        public async Task SetLocalStorageItems(IEnumerable<PocketItemWithContent> value)
+        public Task SetLocalStorageItems(IEnumerable<PocketItemWithContent> value)
         {
-            //using (var stream = await localCacheFolder.OpenStreamForWriteAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting))
-            //using (var streamWriter = new StreamWriter(stream))
-            //using (JsonTextWriter jsonwriter = new JsonTextWriter(streamWriter))
-            //{
-            //    var serializer = new JsonSerializer();
-            //    serializer.Serialize(jsonwriter, value);
-            //}
-
-            var jsonValue = JsonConvert.SerializeObject(value);
-            var localPocketCacheFile = await localCacheFolder.CreateFileAsync("Local_PocketItemWithContent", CreationCollisionOption.ReplaceExisting);
-            await FileIO.WriteTextAsync(localPocketCacheFile, jsonValue);
+            return SaveToJsonFile(localCacheFolder, Local_PocketItemWithContent, value);
         }
 
         public Task<IEnumerable<PocketItem>> Get(RetrieveFilter filter, CancellationToken cancellationToken = default(CancellationToken))
@@ -169,14 +155,66 @@ namespace EasyPocket.Core
             return client.Get(state, favorite, tag, contentType, sort, search, domain, since, count, offset, cancellationToken);
         }
 
-        public Task<PocketArticle> GetArticle(Uri uri, bool includeImages = true, bool includeVideos = true, bool forceRefresh = false, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<PocketArticle> GetArticle(Uri uri, bool includeImages = true, bool includeVideos = true, bool forceRefresh = false, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return client.GetArticle(uri, includeImages, includeVideos, forceRefresh, cancellationToken);
+            StorageFolder articlesFolder = await localCacheFolder.CreateFolderAsync("PocketArticles", CreationCollisionOption.OpenIfExists);
+            string filename = GenerateFileNameFromUri(uri);
+            bool fileExists = false;
+
+            if (forceRefresh == false)
+            {
+                fileExists = (await articlesFolder.TryGetItemAsync(filename)) != null;
+            }
+
+            if (fileExists == false)
+            {
+                PocketArticle content = await client.GetArticle(uri, includeImages, includeVideos, forceRefresh, cancellationToken);
+                await SaveToJsonFile(articlesFolder, filename, content);
+                return content;
+            }
+            else
+            {
+                PocketArticle content = await ExtractFromJsonFile<PocketArticle>(articlesFolder, filename);
+                return content;
+            }
         }
 
         public Task Add(Uri uri)
         {
             return client.Add(uri);
+        }
+
+        private string GenerateFileNameFromUri(Uri uri)
+        {
+            return WebUtility.UrlEncode(uri.ToString());
+        }
+
+        private async Task SaveToJsonFile(StorageFolder folder, string filename, object value)
+        {
+            //using (var stream = await localCacheFolder.OpenStreamForWriteAsync(Local_PocketItemWithContent, CreationCollisionOption.ReplaceExisting))
+            //using (var streamWriter = new StreamWriter(stream))
+            //using (JsonTextWriter jsonwriter = new JsonTextWriter(streamWriter))
+            //{
+            //    var serializer = new JsonSerializer();
+            //    serializer.Serialize(jsonwriter, value);
+            //}
+
+            var localPocketCacheFile = await folder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteTextAsync(localPocketCacheFile, JsonConvert.SerializeObject(value));
+        }
+
+        private async Task<T> ExtractFromJsonFile<T>(StorageFolder folder, string filename) where T : class
+        {
+            T content = null;
+            if (await folder.TryGetItemAsync(filename) != null)
+            {
+                using (var stream = new JsonTextReader(new StreamReader(await folder.OpenStreamForReadAsync(filename))))
+                {
+                    content = new JsonSerializer().Deserialize<T>(stream);
+                }
+            }
+
+            return content;
         }
 
         private static Dictionary<string, string> ParseQueryString(string query)
