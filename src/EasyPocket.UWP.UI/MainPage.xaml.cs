@@ -33,17 +33,6 @@ namespace EasyPocket.UWP.UI
             if (ViewModel == null)
             {
                 ViewModel = await MainPageViewModel.Create();
-
-                DetailContentPresenter.DataContext = ViewModel;//TODO como padronizar?
-            }
-
-            if (e.Parameter != null)
-            {
-                //Não é mais necessário. a ViewModel é compartilhada com o DetailPage
-
-                //// Parameter is item ID
-                //var id = (string)e.Parameter;
-                //ViewModel.LastSelectedItem = ViewModel.Articles.Where((item) => item.ID == id).FirstOrDefault();
             }
 
             UpdateForVisualState(AdaptiveStates.CurrentState);
