@@ -108,7 +108,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EasyPocketClient.cs" />
-    <Compile Include="Html2Article.cs" />
     <Compile Include="PocketItemWithContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\EasyPocket.Core.rd.xml" />

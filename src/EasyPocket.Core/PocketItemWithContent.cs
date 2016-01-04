@@ -22,16 +22,11 @@ namespace EasyPocket.Core
             }
         }
 
-        private static async Task LoadContent(PocketItemWithContent item)
+        private static async Task LoadContent(EasyPocketClient client, PocketItemWithContent item, bool forceRefresh)
         {
-            string content;
             try
             {
-                using (HttpClient httpClient = new HttpClient(new RetryDelegatingHandler()))
-                {
-                    content = await httpClient.GetStringAsync(item.Uri);
-                }
-                item.Content = Html2Article.GetArticle(content).ContentWithTags;
+                item.Content = (await client.GetArticle(item.Uri, forceRefresh: forceRefresh)).Content;
             }
             catch (Exception)
             {
@@ -40,7 +35,7 @@ namespace EasyPocket.Core
         }
 
 
-        public static PocketItemWithContent FromPocketItem(PocketItem item)
+        public static PocketItemWithContent FromPocketItem(EasyPocketClient client, PocketItem item, bool forceRefresh)
         {
             var itemWithContent = new PocketItemWithContent
             {
@@ -50,7 +45,7 @@ namespace EasyPocket.Core
                 Uri = item.Uri,
             };
 
-            LoadContent(itemWithContent);
+            LoadContent(client, itemWithContent, forceRefresh);
 
             return itemWithContent;
         }
@@ -59,41 +54,6 @@ namespace EasyPocket.Core
         public override void OnPropertyChanged([CallerMemberName] string caller = "")
         {
             base.OnPropertyChanged(caller);
-        }
-    }
-
-    public class RetryDelegatingHandler : DelegatingHandler
-    {
-        public int MaxRetries { get; set; } = 3;
-
-
-        public RetryDelegatingHandler() : this(new HttpClientHandler())
-        { }
-
-        public RetryDelegatingHandler(HttpMessageHandler innerHandler)
-            : base(innerHandler)
-        {
-        }
-
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            HttpResponseMessage response;
-
-            int i = 0;
-            do
-            {
-                try
-                {
-                    response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-                    return response;
-                }
-                catch (Exception ex) when (i<= MaxRetries)
-                {
-
-                }
-
-                i++;
-            } while (true);
         }
     }
 }

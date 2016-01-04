@@ -67,7 +67,7 @@ namespace EasyPocket.Core
                 await Auth();
             }
 
-            client = new PocketClient(consumerKey, AccessToken);
+            client = new PocketClient(consumerKey, AccessToken, parserUri: new Uri("http://text.getpocket.com/v3/text"));
         }
 
         public async Task Auth()
@@ -167,6 +167,11 @@ namespace EasyPocket.Core
         public Task<IEnumerable<PocketItem>> Get(State? state = default(State?), bool? favorite = default(bool?), string tag = null, ContentType? contentType = default(ContentType?), Sort? sort = default(Sort?), string search = null, string domain = null, DateTime? since = default(DateTime?), int? count = default(int?), int? offset = default(int?), CancellationToken cancellationToken = default(CancellationToken))
         {
             return client.Get(state, favorite, tag, contentType, sort, search, domain, since, count, offset, cancellationToken);
+        }
+
+        public Task<PocketArticle> GetArticle(Uri uri, bool includeImages = true, bool includeVideos = true, bool forceRefresh = false, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return client.GetArticle(uri, includeImages, includeVideos, forceRefresh, cancellationToken);
         }
 
         public Task Add(Uri uri)

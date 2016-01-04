@@ -77,7 +77,7 @@ namespace EasyPocket.UWP.UI
 
                 Articles.Clear();
 
-                var itemsWithContent = (await App.PocketClient.Get()).Select(PocketItemWithContent.FromPocketItem).ToList();
+                var itemsWithContent = (await App.PocketClient.Get()).Select(x=> PocketItemWithContent.FromPocketItem(App.PocketClient, x, false)).ToList();
 
                 foreach (var item in itemsWithContent)
                 {
