@@ -27,15 +27,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0"
-            Margin="8,0"
-            Style="{ThemeResource TitleTextBlockStyle}"
-            HorizontalAlignment="Stretch" VerticalAlignment="Top"
-            Text="{x:Bind Item.Title, Mode=OneWay}" />
-
         <WebView Grid.Row="1" Grid.Column="0" x:Name="WebContent" local:WebViewHtmlExtension.HTML="{x:Bind Item, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                 EntranceNavigationTransitionInfo.IsTargetElement="True" Margin="0,0,0,0"
-                 />
+                 EntranceNavigationTransitionInfo.IsTargetElement="True" />
         
         <!--<TextBlock
             Margin="12,8"

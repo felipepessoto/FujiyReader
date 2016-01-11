@@ -47,13 +47,7 @@
 
         <DataTemplate x:Key="DetailContentTemplate" x:DataType="pocketsharp:PocketItemWithContent">
             <Grid>
-                <TextBlock
-                    Margin="0,8"
-                    Style="{ThemeResource TitleTextBlockStyle}"
-                    HorizontalAlignment="Stretch" Height="50" VerticalAlignment="Top"
-                    Text="{x:Bind Title}"/>
-
-                <WebView local:WebViewHtmlExtension.HTML="{x:Bind}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Margin="0,50,0,0" />
+                <WebView local:WebViewHtmlExtension.HTML="{x:Bind}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
             </Grid>
         </DataTemplate>
     </Page.Resources>
