@@ -33,7 +33,7 @@
             HorizontalAlignment="Stretch" VerticalAlignment="Top"
             Text="{x:Bind Item.Title, Mode=OneWay}" />
 
-        <WebView Grid.Row="1" Grid.Column="0" x:Name="WebContent" local:WebViewHtmlExtension.HTML="{x:Bind Item.Content, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+        <WebView Grid.Row="1" Grid.Column="0" x:Name="WebContent" local:WebViewHtmlExtension.HTML="{x:Bind Item, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                  EntranceNavigationTransitionInfo.IsTargetElement="True" Margin="0,0,0,0"
                  />
         

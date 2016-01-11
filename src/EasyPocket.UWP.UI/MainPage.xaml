@@ -53,7 +53,7 @@
                     HorizontalAlignment="Stretch" Height="50" VerticalAlignment="Top"
                     Text="{x:Bind Title}"/>
 
-                <WebView local:WebViewHtmlExtension.HTML="{x:Bind Content, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Margin="0,50,0,0" />
+                <WebView local:WebViewHtmlExtension.HTML="{x:Bind}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Margin="0,50,0,0" />
             </Grid>
         </DataTemplate>
     </Page.Resources>

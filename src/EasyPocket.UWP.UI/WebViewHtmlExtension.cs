@@ -1,28 +1,32 @@
-﻿using Windows.UI.Xaml;
+﻿using EasyPocket.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace EasyPocket.UWP.UI
 {
     public class WebViewHtmlExtension
     {
-        public static string GetHTML(DependencyObject obj)
+        public static PocketItemWithContent GetHTML(DependencyObject obj)
         {
-            return (string)obj.GetValue(HTMLProperty);
+            return (PocketItemWithContent)obj.GetValue(HTMLProperty);
         }
 
-        public static void SetHTML(DependencyObject obj, string value)
+        public static void SetHTML(DependencyObject obj, PocketItemWithContent value)
         {
             obj.SetValue(HTMLProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for HTML.  This enables animation, styling, binding, etc... 
-        public static readonly DependencyProperty HTMLProperty = DependencyProperty.RegisterAttached("HTML", typeof(string), typeof(WebViewHtmlExtension), new PropertyMetadata("", new PropertyChangedCallback(OnHTMLChanged)));
+        public static readonly DependencyProperty HTMLProperty = DependencyProperty.RegisterAttached("HTML", typeof(PocketItemWithContent), typeof(WebViewHtmlExtension), new PropertyMetadata("", new PropertyChangedCallback(OnHTMLChanged)));
 
         private static void OnHTMLChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             WebView wv = d as WebView;
-            if (wv != null)
+            var item = (PocketItemWithContent)e.NewValue;
+            if (wv != null && item != null)
             {
+
+
 //                < style >
 //    * {
 //                    max - width: 100 %;
@@ -37,15 +41,20 @@ namespace EasyPocket.UWP.UI
                 string content = @"<!DOCTYPE html>
 <html>
 <head>
-<link rel=""stylesheet"" href=""ms-appx-web:///css/ui-dark.min.css"" />
+<link rel=""stylesheet"" href=""ms-appx-web:///css/ui-" + Application.Current.RequestedTheme + @".css"" />
 <style>
     html {
         overflow: initial;
     }
+    a { color: inherit; }
+    img {
+        max-width: 100% !important;
+    }
 </style>
 </head>
 <body>
-" + (string)e.NewValue + @"
+<h1>"+item.Title+@"</h1>
+" + item.Content + @"
 
 </body>
 </html>
