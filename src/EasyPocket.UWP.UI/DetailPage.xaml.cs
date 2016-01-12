@@ -150,5 +150,15 @@ namespace EasyPocket.UWP.UI
 
             OnBackRequested();
         }
+
+        private void WebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        {
+            WebViewHtmlExtension.WebView_NavigationCompleted(sender, Item);
+        }
+
+        private void WebView_ScriptNotify(object sender, NotifyEventArgs e)
+        {
+            WebViewHtmlExtension.WebView_ScriptNotify(Item, e);
+        }
     }
 }

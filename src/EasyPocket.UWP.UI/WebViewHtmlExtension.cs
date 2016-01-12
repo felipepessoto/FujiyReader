@@ -27,17 +27,17 @@ namespace EasyPocket.UWP.UI
             {
 
 
-//                < style >
-//    * {
-//                    max - width: 100 %;
-//                    overflow: auto;
-//                }
-//                img {
-//                    display: block;
-//                    max - width: 100 %;
-//                    height: auto;
-//                }
-//</ style >
+                //                < style >
+                //    * {
+                //                    max - width: 100 %;
+                //                    overflow: auto;
+                //                }
+                //                img {
+                //                    display: block;
+                //                    max - width: 100 %;
+                //                    height: auto;
+                //                }
+                //</ style >
                 string content = @"<!DOCTYPE html>
 <html>
 <head>
@@ -51,9 +51,21 @@ namespace EasyPocket.UWP.UI
         max-width: 100% !important;
     }
 </style>
+<script>
+  window.onscroll = GetScrollPosition;
+
+    function GetScrollPosition() {
+        window.external.notify(window.pageXOffset + "","" + window.pageYOffset);
+    }
+
+    function SetScrollPosition(X, Y) {
+        window.scrollTo(X, Y);
+        window.external.notify(window.pageXOffset + "","" + window.pageYOffset);
+    }
+</script>
 </head>
 <body>
-<h1>"+item.Title+@"</h1>
+<h1>" + item.Title + @"</h1>
 " + item.Content + @"
 
 </body>
@@ -63,5 +75,21 @@ namespace EasyPocket.UWP.UI
             }
         }
 
+        public static void WebView_NavigationCompleted(WebView sender, PocketItemWithContent item)
+        {
+            if (item.ScrollVerticalPosition > 0)
+            {
+                sender.InvokeScriptAsync("SetScrollPosition", new string[] { "0", item.ScrollVerticalPosition.ToString() });
+            }
+        }
+
+        public static void WebView_ScriptNotify(PocketItemWithContent item, NotifyEventArgs e)
+        {
+            string[] Coordinates = e.Value.Split(',');
+            var x = double.Parse(Coordinates[0]);
+            var y = (int)double.Parse(Coordinates[1]);
+
+            item.ScrollVerticalPosition = y;
+        }
     }
 }

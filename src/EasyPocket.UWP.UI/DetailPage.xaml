@@ -27,7 +27,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <WebView Grid.Row="1" Grid.Column="0" x:Name="WebContent" local:WebViewHtmlExtension.HTML="{x:Bind Item, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+        <WebView Grid.Row="1" Grid.Column="0" x:Name="WebContent" local:WebViewHtmlExtension.HTML="{x:Bind Item, Mode=OneWay}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationCompleted="WebView_NavigationCompleted" ScriptNotify="WebView_ScriptNotify"
                  EntranceNavigationTransitionInfo.IsTargetElement="True" />
         
         <!--<TextBlock

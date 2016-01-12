@@ -1,5 +1,6 @@
 ﻿using EasyPocket.Core;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -36,6 +37,8 @@ namespace EasyPocket.UWP.UI
         {
             var localItems = await App.PocketClient.GetLocalStorageItems();
             Articles = new ObservableCollection<PocketItemWithContent>(localItems);
+
+            AttachAutoSave(Articles);
         }
 
         public ObservableCollection<PocketItemWithContent> Articles { get; set; }
@@ -86,14 +89,19 @@ namespace EasyPocket.UWP.UI
 
                 await SaveToLocalStorage();
 
-                foreach (var item in itemsWithContent)
-                {
-                    item.PropertyChanged += Item_PropertyChanged;
-                }
+                AttachAutoSave(Articles);
             }
             finally
             {
                 CanSync = true;
+            }
+        }
+
+        private void AttachAutoSave(IEnumerable<PocketItemWithContent> items)
+        {
+            foreach (var item in items)
+            {
+                item.PropertyChanged += Item_PropertyChanged;
             }
         }
 
@@ -103,7 +111,7 @@ namespace EasyPocket.UWP.UI
         private async void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             //TODO fazer throttle
-            if (e.PropertyName == "Content")
+            if (e.PropertyName == "Content" || e.PropertyName == "ScrollVerticalPosition")
             {
                 if (await semaphoreQueue.WaitAsync(0))
                 {

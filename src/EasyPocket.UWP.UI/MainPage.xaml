@@ -47,7 +47,7 @@
 
         <DataTemplate x:Key="DetailContentTemplate" x:DataType="pocketsharp:PocketItemWithContent">
             <Grid>
-                <WebView local:WebViewHtmlExtension.HTML="{x:Bind}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                <WebView local:WebViewHtmlExtension.HTML="{x:Bind}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationCompleted="WebView_NavigationCompleted" ScriptNotify="WebView_ScriptNotify" />
             </Grid>
         </DataTemplate>
     </Page.Resources>

@@ -22,6 +22,18 @@ namespace EasyPocket.Core
             }
         }
 
+        private int scrollVerticalPosition;
+
+        public int ScrollVerticalPosition
+        {
+            get { return scrollVerticalPosition; }
+            set
+            {
+                scrollVerticalPosition = value;
+                OnPropertyChanged();
+            }
+        }
+
         private static async Task LoadContent(EasyPocketClient client, PocketItemWithContent item, bool forceRefresh)
         {
             try
