@@ -147,6 +147,8 @@ namespace EasyPocket.UWP.UI
 
         public async Task SaveToLocalStorage()
         {
+            //TODO mudar storage para um arquivo por artigo
+
             await App.PocketClient.SetLocalStorageItems(Articles);
         }
     }

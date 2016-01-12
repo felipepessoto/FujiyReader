@@ -55,7 +55,7 @@ namespace EasyPocket.Core
                 Title = item.Title,
                 Excerpt = item.Excerpt,
                 Uri = item.Uri,
-                ScrollVerticalPosition = (await client.GetLocalStorageItem(item.ID)).ScrollVerticalPosition,
+                ScrollVerticalPosition = ((await client.GetLocalStorageItem(item.ID))?.ScrollVerticalPosition).GetValueOrDefault(),
             };
 
             LoadContent(client, itemWithContent, forceRefresh);
