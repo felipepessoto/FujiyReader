@@ -47,7 +47,7 @@ namespace EasyPocket.Core
         }
 
 
-        public static PocketItemWithContent FromPocketItem(EasyPocketClient client, PocketItem item, bool forceRefresh)
+        public static async Task<PocketItemWithContent> FromPocketItem(EasyPocketClient client, PocketItem item, bool forceRefresh)
         {
             var itemWithContent = new PocketItemWithContent
             {
@@ -55,6 +55,7 @@ namespace EasyPocket.Core
                 Title = item.Title,
                 Excerpt = item.Excerpt,
                 Uri = item.Uri,
+                ScrollVerticalPosition = (await client.GetLocalStorageItem(item.ID)).ScrollVerticalPosition,
             };
 
             LoadContent(client, itemWithContent, forceRefresh);

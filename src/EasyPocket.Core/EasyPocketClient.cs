@@ -135,6 +135,13 @@ namespace EasyPocket.Core
             return content ?? Enumerable.Empty<PocketItemWithContent>();
         }
 
+        public async Task<PocketItemWithContent> GetLocalStorageItem(string id)
+        {
+            PocketItemWithContent content = (await ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent)).SingleOrDefault(x => x.ID == id);
+
+            return content;
+        }
+
         public Task SetLocalStorageItems(IEnumerable<PocketItemWithContent> value)
         {
             return SaveToJsonFile(localCacheFolder, Local_PocketItemWithContent, value);
