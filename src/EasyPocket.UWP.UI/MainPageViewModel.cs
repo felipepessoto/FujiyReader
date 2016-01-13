@@ -55,6 +55,8 @@ namespace EasyPocket.UWP.UI
             }
         }
 
+        public PocketItemWithContent ContextMenuItem { get; set; }
+
         private bool canSync = true;
         public bool CanSync
         {
@@ -103,6 +105,20 @@ namespace EasyPocket.UWP.UI
             {
                 CanSync = true;
             }
+        }
+
+        public Task MarkRead()
+        {
+            var item = ContextMenuItem;
+
+            return App.PocketClient.MarkRead(item.ID);
+        }
+
+        public Task Delete()
+        {
+            var item = ContextMenuItem;
+
+            return App.PocketClient.Delete(item.ID);
         }
 
         private void AttachAutoSave(IEnumerable<PocketItemWithContent> items)

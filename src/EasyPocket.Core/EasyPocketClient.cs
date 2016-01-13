@@ -186,9 +186,19 @@ namespace EasyPocket.Core
             }
         }
 
-        public Task Add(Uri uri)
+        public Task<PocketItem> Add(Uri uri)
         {
             return client.Add(uri);
+        }
+
+        public Task<bool> MarkRead(string itemId)
+        {
+            return client.Archive(itemId);
+        }
+
+        public Task<bool> Delete(string itemId)
+        {
+            return client.Delete(itemId);
         }
 
         private string GenerateFileNameFromUri(Uri uri)

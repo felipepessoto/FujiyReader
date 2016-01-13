@@ -3,8 +3,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -103,6 +106,117 @@ namespace EasyPocket.UWP.UI
         private void WebView_ScriptNotify(object sender, NotifyEventArgs e)
         {
             WebViewHtmlExtension.WebView_ScriptNotify((PocketItemWithContent)((WebView)sender).DataContext, e);
+        }
+
+        private bool _IsShiftPressed = false;
+        private bool _IsPointerPressed = false;
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            // Handle Shift+F10
+            // Handle MenuKey
+
+            if (e.Key == Windows.System.VirtualKey.Shift)
+            {
+                _IsShiftPressed = true;
+            }
+
+            // Shift+F10
+            else if (_IsShiftPressed && e.Key == Windows.System.VirtualKey.F10)
+            {
+                var FocusedElement = FocusManager.GetFocusedElement() as UIElement;
+
+                PocketItemWithContent MyObject = null;
+                if (FocusedElement is ContentControl)
+                {
+                    MyObject = ((ContentControl)FocusedElement).Content as PocketItemWithContent;
+                }
+                ShowContextMenu(MyObject, FocusedElement, new Point(0, 0));
+                e.Handled = true;
+            }
+
+            // The 'Menu' key next to Right Ctrl on most keyboards
+            else if (e.Key == Windows.System.VirtualKey.Application)
+            {
+                var FocusedElement = FocusManager.GetFocusedElement() as UIElement;
+                PocketItemWithContent MyObject = null;
+                if (FocusedElement is ContentControl)
+                {
+                    MyObject = ((ContentControl)FocusedElement).Content as PocketItemWithContent;
+                }
+                ShowContextMenu(MyObject, FocusedElement, new Point(0, 0));
+                e.Handled = true;
+            }
+
+            base.OnKeyDown(e);
+        }
+
+        protected override void OnKeyUp(KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Shift)
+            {
+                _IsShiftPressed = false;
+            }
+
+            base.OnKeyUp(e);
+        }
+        protected override void OnHolding(HoldingRoutedEventArgs e)
+        {
+            // Responding to HoldingState.Started will show a context menu while your finger is still down, while 
+            // HoldingState.Completed will wait until the user has removed their finger. 
+            if (e.HoldingState == Windows.UI.Input.HoldingState.Completed)
+            {
+                var PointerPosition = e.GetPosition(null);
+
+                var MyObject = (e.OriginalSource as FrameworkElement).DataContext as PocketItemWithContent;
+                ShowContextMenu(MyObject, null, PointerPosition);
+                e.Handled = true;
+
+                // This, combined with a check in OnRightTapped prevents the firing of RightTapped from
+                // launching another context menu
+                _IsPointerPressed = false;
+
+                // This prevents any scrollviewers from continuing to pan once the context menu is displayed.  
+                // Ideally, you should find the ListViewItem itself and only CancelDirectMinpulations on that item.  
+                var ItemsToCancel = VisualTreeHelper.FindElementsInHostCoordinates(PointerPosition, MasterListView);
+                foreach (var Item in ItemsToCancel)
+                {
+                    var Result = Item.CancelDirectManipulations();
+                }
+            }
+
+            base.OnHolding(e);
+        }
+
+        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        {
+            _IsPointerPressed = true;
+
+            base.OnPointerPressed(e);
+        }
+
+        protected override void OnRightTapped(RightTappedRoutedEventArgs e)
+        {
+            if (_IsPointerPressed)
+            {
+                var MyObject = (e.OriginalSource as FrameworkElement).DataContext as PocketItemWithContent;
+
+                ShowContextMenu(MyObject, null, e.GetPosition(null));
+                e.Handled = true;
+            }
+
+            base.OnRightTapped(e);
+        }
+
+        private void ShowContextMenu(PocketItemWithContent data, UIElement target, Point offset)
+        {
+            ViewModel.ContextMenuItem = data;
+
+            var MyFlyout = this.Resources["SampleContextMenu"] as MenuFlyout;
+
+            System.Diagnostics.Debug.WriteLine("MenuFlyout shown '{0}', '{1}'", target, offset);
+
+            MyFlyout.ShowAt(target, offset);
         }
     }
 }
