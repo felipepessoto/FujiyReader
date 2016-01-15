@@ -66,6 +66,7 @@ namespace EasyPocket.UWP.UI
 </head>
 <body>
 <h1>" + item.Title + @"</h1>
+<a target=""_blank"" style=""text-decoration: none;"" href=" + item.Uri + ">" + item.Uri.Host + @"</a>
 " + item.Content + @"
 
 </body>
