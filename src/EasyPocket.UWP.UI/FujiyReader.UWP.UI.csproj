@@ -151,9 +151,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EasyPocket.Core\EasyPocket.Core.csproj">
+    <ProjectReference Include="..\EasyPocket.Core\FujiyReader.Core.csproj">
       <Project>{beac4f62-1368-4db7-8942-83702aa8b389}</Project>
-      <Name>EasyPocket.Core</Name>
+      <Name>FujiyReader.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

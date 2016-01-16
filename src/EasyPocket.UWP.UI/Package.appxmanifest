@@ -3,7 +3,7 @@
   <Identity Name="915Fujiy.EasyPocket" Publisher="CN=9FAEAAEF-74D6-4DD5-B2FB-B5C397EFD3E4" Version="1.1.0.0" />
   <mp:PhoneIdentity PhoneProductId="ce21d511-addf-431e-ae46-67cfbf32360b" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>Easy Pocket</DisplayName>
+    <DisplayName>Fujiy Reader</DisplayName>
     <PublisherDisplayName>Fujiy</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="EasyPocket.UWP.UI.App">
-      <uap:VisualElements DisplayName="Easy Pocket" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="EasyPocket.UWP.UI" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="Fujiy Reader" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Fujiy Reader" BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png">
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="white" />
