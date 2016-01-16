@@ -7,8 +7,8 @@
     <ProjectGuid>{BEAC4F62-1368-4DB7-8942-83702AA8B389}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EasyPocket.Core</RootNamespace>
-    <AssemblyName>EasyPocket.Core</AssemblyName>
+    <RootNamespace>FujiyReader.Core</RootNamespace>
+    <AssemblyName>FujiyReader.Core</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>

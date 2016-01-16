@@ -1,4 +1,4 @@
-﻿using EasyPocket.Core;
+﻿using FujiyReader.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EasyPocket.UWP.UI
+namespace FujiyReader.UWP.UI
 {
     public class MainPageViewModel : INotifyPropertyChanged
     {

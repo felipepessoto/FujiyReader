@@ -1,8 +1,8 @@
-﻿using EasyPocket.Core;
+﻿using FujiyReader.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace EasyPocket.UWP.UI
+namespace FujiyReader.UWP.UI
 {
     public class WebViewHtmlExtension
     {

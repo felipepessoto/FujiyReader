@@ -1,4 +1,4 @@
-﻿using EasyPocket.Core;
+﻿using FujiyReader.Core;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -13,15 +13,13 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace EasyPocket.UWP.UI
+namespace FujiyReader.UWP.UI
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        //EasyPocketClient pocketClient;
-
         public MainPageViewModel ViewModel { get; set; }
 
         public MainPage()

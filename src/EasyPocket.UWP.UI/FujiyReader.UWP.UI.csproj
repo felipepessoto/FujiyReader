@@ -7,8 +7,8 @@
     <ProjectGuid>{A79ED6FB-1AFB-44C9-8AD0-5F51824B5822}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EasyPocket.UWP.UI</RootNamespace>
-    <AssemblyName>EasyPocket.UWP.UI</AssemblyName>
+    <RootNamespace>FujiyReader.UWP.UI</RootNamespace>
+    <AssemblyName>FujiyReader.UWP.UI</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>

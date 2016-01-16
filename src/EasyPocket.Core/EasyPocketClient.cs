@@ -14,9 +14,9 @@ using Windows.Foundation;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
 
-namespace EasyPocket.Core
+namespace FujiyReader.Core
 {
-    public class EasyPocketClient
+    public class FujiyReaderClient
     {
         PocketClient client;
         private const string consumerKey = "49510-2b106efad3cb48ae12eab7f9";
@@ -50,15 +50,15 @@ namespace EasyPocket.Core
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
         Windows.Storage.StorageFolder localCacheFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 
-        private EasyPocketClient() { }
+        private FujiyReaderClient() { }
 
-        public static async Task<EasyPocketClient> Create()
+        public static async Task<FujiyReaderClient> Create()
         {
-            var easyPocketClient = new EasyPocketClient();
+            var fujiyReaderClient = new FujiyReaderClient();
 
-            await easyPocketClient.Initialize();
+            await fujiyReaderClient.Initialize();
 
-            return easyPocketClient;
+            return fujiyReaderClient;
         }
 
         private async Task Initialize()

@@ -1,4 +1,4 @@
-﻿using EasyPocket.Core;
+﻿using FujiyReader.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,14 +20,14 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace EasyPocket.UWP.UI
+namespace FujiyReader.UWP.UI
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App : Application
     {
-        public static EasyPocketClient PocketClient
+        public static FujiyReaderClient PocketClient
         {
             get; private set;
         }
@@ -52,7 +52,7 @@ namespace EasyPocket.UWP.UI
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            PocketClient = await EasyPocketClient.Create();
+            PocketClient = await FujiyReaderClient.Create();
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)

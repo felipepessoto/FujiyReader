@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EasyPocket.Core
+namespace FujiyReader.Core
 {
     public class PocketItemWithContent : PocketItem
     {
@@ -34,7 +34,7 @@ namespace EasyPocket.Core
             }
         }
 
-        private static async Task LoadContent(EasyPocketClient client, PocketItemWithContent item, bool forceRefresh)
+        private static async Task LoadContent(FujiyReaderClient client, PocketItemWithContent item, bool forceRefresh)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace EasyPocket.Core
         }
 
 
-        public static async Task<PocketItemWithContent> FromPocketItem(EasyPocketClient client, PocketItem item, bool forceRefresh)
+        public static async Task<PocketItemWithContent> FromPocketItem(FujiyReaderClient client, PocketItem item, bool forceRefresh)
         {
             //TODO verificar props read only
             var itemWithContent = new PocketItemWithContent
