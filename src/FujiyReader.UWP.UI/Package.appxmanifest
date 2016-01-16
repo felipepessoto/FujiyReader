@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="915Fujiy.EasyPocket" Publisher="CN=9FAEAAEF-74D6-4DD5-B2FB-B5C397EFD3E4" Version="1.1.0.0" />
+  <Identity Name="915Fujiy.FujiyReader" Publisher="CN=9FAEAAEF-74D6-4DD5-B2FB-B5C397EFD3E4" Version="1.1.0.0" />
   <mp:PhoneIdentity PhoneProductId="ce21d511-addf-431e-ae46-67cfbf32360b" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Fujiy Reader</DisplayName>
-    <PublisherDisplayName>Fujiy</PublisherDisplayName>
+    <PublisherDisplayName>Felipe Fujiy Pessoto</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

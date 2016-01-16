@@ -358,14 +358,14 @@
     <Language Code="zu-za" InMinimumRequirementSet="true" />
   </SupportedLocales>
   <ProductReservedInfo>
-    <MainPackageIdentityName>915Fujiy.EasyPocket</MainPackageIdentityName>
+    <MainPackageIdentityName>915Fujiy.FujiyReader</MainPackageIdentityName>
     <ReservedNames>
-      <ReservedName>Easy Pocket</ReservedName>
+      <ReservedName>Fujiy Reader</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>915Fujiy.CET-TransitoAgora</MainPackageIdentityName>
     <MainPackageIdentityName>915Fujiy.HLearning</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9NBLGGH5J4TG" />
+  <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9NBLGGH5FPLH" />
 </StoreAssociation>

@@ -16,7 +16,7 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>EasyPocket.UWP.UI_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>FujiyReader.UWP.UI_StoreKey.pfx</PackageCertificateKeyFile>
     <PackageCertificateThumbprint>1793D4EA9BC7A08096C30078957703D7974B5FE5</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -93,7 +93,8 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="EasyPocket.UWP.UI_StoreKey.pfx" />
+    <None Include="FujiyReader.UWP.UI_StoreKey.pfx" />
+    <None Include="FujiyReader.UWP.UI_TemporaryKey.pfx" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +118,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="EasyPocket.UWP.UI_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
