@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FujiyReader.UWP.UI", "EasyPocket.UWP.UI\FujiyReader.UWP.UI.csproj", "{A79ED6FB-1AFB-44C9-8AD0-5F51824B5822}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FujiyReader.UWP.UI", "FujiyReader.UWP.UI\FujiyReader.UWP.UI.csproj", "{A79ED6FB-1AFB-44C9-8AD0-5F51824B5822}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FujiyReader.Core", "EasyPocket.Core\FujiyReader.Core.csproj", "{BEAC4F62-1368-4DB7-8942-83702AA8B389}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FujiyReader.Core", "FujiyReader.Core\FujiyReader.Core.csproj", "{BEAC4F62-1368-4DB7-8942-83702AA8B389}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
