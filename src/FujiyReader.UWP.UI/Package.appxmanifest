@@ -4,7 +4,7 @@
   <mp:PhoneIdentity PhoneProductId="ce21d511-addf-431e-ae46-67cfbf32360b" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Fujiy Reader</DisplayName>
-    <PublisherDisplayName>Felipe Fujiy Pessoto</PublisherDisplayName>
+    <PublisherDisplayName>Fujiy</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
