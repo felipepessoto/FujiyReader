@@ -1,4 +1,5 @@
 ﻿using FujiyReader.Core;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -34,6 +35,10 @@ namespace FujiyReader.UWP.UI
             if (ViewModel == null)
             {
                 ViewModel = await MainPageViewModel.Create();
+                if (ViewModel.LastSync < DateTimeOffset.Now.AddHours(-1))
+                {
+                    await ViewModel.Sync();
+                }
             }
 
             UpdateForVisualState(AdaptiveStates.CurrentState);

@@ -54,12 +54,12 @@
         <MenuFlyout x:Key="SampleContextMenu">
             <MenuFlyoutItem Text="Mark Read" Tag="&#xE1A5;" Style="{StaticResource MenuFlyoutItemIconTemplate}" Click="{x:Bind ViewModel.MarkRead}" />
             <MenuFlyoutItem Text="Delete" Tag="&#xE10A;" Style="{StaticResource MenuFlyoutItemIconTemplate}" Click="{x:Bind ViewModel.Delete}" />
-            <MenuFlyoutSubItem Text="Other">
+            <!--<MenuFlyoutSubItem Text="Other">
                 <MenuFlyoutItem Text="Sort by" />
                 <MenuFlyoutItem Text="Name" />
                 <MenuFlyoutItem Text="Date" />
                 <MenuFlyoutItem Text="Size" />
-            </MenuFlyoutSubItem>
+            </MenuFlyoutSubItem>-->
         </MenuFlyout>
 
         <Style x:Key="MenuFlyoutItemIconTemplate" TargetType="MenuFlyoutItem">

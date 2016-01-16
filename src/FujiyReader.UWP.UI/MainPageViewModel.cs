@@ -7,12 +7,15 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace FujiyReader.UWP.UI
 {
     public class MainPageViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
         private void RaisePropertyChanged([CallerMemberName] string caller = "")
         {
@@ -57,6 +60,18 @@ namespace FujiyReader.UWP.UI
 
         public PocketItemWithContent ContextMenuItem { get; set; }
 
+        public DateTimeOffset LastSync
+        {
+            get
+            {
+                return (DateTimeOffset)(localSettings.Values["last_sync"] ?? DateTimeOffset.MinValue);
+            }
+            set
+            {
+                localSettings.Values["last_sync"] = value;
+            }
+        }
+
         private bool canSync = true;
         public bool CanSync
         {
@@ -98,6 +113,8 @@ namespace FujiyReader.UWP.UI
                 }
 
                 await SaveToLocalStorage();
+
+                LastSync = DateTimeOffset.Now;
 
                 AttachAutoSave(Articles);
             }
