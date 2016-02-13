@@ -167,7 +167,7 @@ namespace FujiyReader.UWP.UI
         {
             // Responding to HoldingState.Started will show a context menu while your finger is still down, while 
             // HoldingState.Completed will wait until the user has removed their finger. 
-            if (e.HoldingState == Windows.UI.Input.HoldingState.Completed)
+            if (e.HoldingState == Windows.UI.Input.HoldingState.Started)
             {
                 var PointerPosition = e.GetPosition(null);
 
