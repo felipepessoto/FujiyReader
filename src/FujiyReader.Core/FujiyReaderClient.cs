@@ -19,9 +19,8 @@ namespace FujiyReader.Core
     public class FujiyReaderClient
     {
         PocketClient client;
-        private const string consumerKey = "49510-2b106efad3cb48ae12eab7f9";
-        //Desktop 49510-2b106efad3cb48ae12eab7f9
-        //Mobile 49510-89dd4b9e7a7314b66f780da3
+        //private const string consumerKey = "49510-2b106efad3cb48ae12eab7f9";//Desktop
+        private const string consumerKey = "49510-89dd4b9e7a7314b66f780da3";//Mobile
 
         private string AccessToken
         {
@@ -162,10 +161,10 @@ namespace FujiyReader.Core
             return client.Get(state, favorite, tag, contentType, sort, search, domain, since, count, offset, cancellationToken);
         }
 
-        public async Task<PocketArticle> GetArticle(Uri uri, bool includeImages = true, bool includeVideos = true, bool forceRefresh = false, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<PocketArticle> GetArticle(PocketItem item, bool includeImages = true, bool includeVideos = true, bool forceRefresh = false, CancellationToken cancellationToken = default(CancellationToken))
         {
             StorageFolder articlesFolder = await localCacheFolder.CreateFolderAsync("PocketArticles", CreationCollisionOption.OpenIfExists);
-            string filename = GenerateFileNameFromUri(uri);
+            string filename = item.ID;// GenerateFileNameFromUri(uri);
             bool fileExists = false;
 
             if (forceRefresh == false)
@@ -173,17 +172,18 @@ namespace FujiyReader.Core
                 fileExists = (await articlesFolder.TryGetItemAsync(filename)) != null;
             }
 
-            if (fileExists == false)
+            if (fileExists)
             {
-                PocketArticle content = await client.GetArticle(uri, includeImages, includeVideos, forceRefresh, cancellationToken);
-                await SaveToJsonFile(articlesFolder, filename, content);
-                return content;
+                PocketArticle cachedContent = await ExtractFromJsonFile<PocketArticle>(articlesFolder, filename);
+                if (cachedContent != null)
+                {
+                    return cachedContent;
+                }
             }
-            else
-            {
-                PocketArticle content = await ExtractFromJsonFile<PocketArticle>(articlesFolder, filename);
-                return content;
-            }
+
+            PocketArticle content = await client.GetArticle(item.Uri, includeImages, includeVideos, forceRefresh, cancellationToken);
+            await SaveToJsonFile(articlesFolder, filename, content);
+            return content;
         }
 
         public Task<PocketItem> Add(Uri uri)

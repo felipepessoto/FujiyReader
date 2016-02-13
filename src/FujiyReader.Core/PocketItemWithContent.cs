@@ -38,7 +38,7 @@ namespace FujiyReader.Core
         {
             try
             {
-                item.Content = (await client.GetArticle(item.Uri, forceRefresh: forceRefresh)).Content;
+                item.Content = (await client.GetArticle(item, forceRefresh: forceRefresh)).Content;
             }
             catch (Exception)
             {
