@@ -1,23 +1,12 @@
 ﻿using FujiyReader.Core;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.ApplicationModel.DataTransfer.ShareTarget;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace FujiyReader.UWP.UI
@@ -53,6 +42,7 @@ namespace FujiyReader.UWP.UI
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             await InitializePocketClient();
+            HandleNetworkError();
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -90,6 +80,39 @@ namespace FujiyReader.UWP.UI
             }
             // Ensure the current window is active
             Window.Current.Activate();
+        }
+
+        private void HandleNetworkError()
+        {
+            UnhandledException += async (sender, e) =>
+            {
+                Exception ex = e.Exception;
+
+                while(ex is HttpRequestException == false && ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                }
+
+                if(ex is HttpRequestException)
+                {
+                    e.Handled = true;
+                    // Create the message dialog and set its content
+                    var messageDialog = new MessageDialog("No internet connection has been found.");
+
+                    // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
+                    //messageDialog.Commands.Add(new UICommand("Try again",new UICommandInvokedHandler(this.CommandInvokedHandler)));
+                    messageDialog.Commands.Add(new UICommand("Close"/*, new UICommandInvokedHandler(this.CommandInvokedHandler)*/));
+
+                    // Set the command that will be invoked by default
+                    messageDialog.DefaultCommandIndex = 0;
+
+                    // Set the command to be invoked when escape is pressed
+                    messageDialog.CancelCommandIndex = 1;
+
+                    // Show the message dialog
+                    await messageDialog.ShowAsync();
+                }
+            };
         }
 
         private static async Task InitializePocketClient()
