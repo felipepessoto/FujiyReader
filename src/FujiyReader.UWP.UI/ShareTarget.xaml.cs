@@ -47,7 +47,7 @@ namespace FujiyReader.UWP.UI
             }
             catch (Exception ex)
             {
-                shareOperation.ReportError(ex.ToString());
+                shareOperation.ReportError($"Error saving {shareOperation.Data.Properties.Title}. Details: {ex.Message}");
             }
         }
     }

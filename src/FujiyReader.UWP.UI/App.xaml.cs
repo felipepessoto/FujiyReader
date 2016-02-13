@@ -52,7 +52,7 @@ namespace FujiyReader.UWP.UI
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            PocketClient = await FujiyReaderClient.Create();
+            await InitializePocketClient();
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -92,6 +92,11 @@ namespace FujiyReader.UWP.UI
             Window.Current.Activate();
         }
 
+        private static async Task InitializePocketClient()
+        {
+            PocketClient = await FujiyReaderClient.Create();
+        }
+
         /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>
@@ -116,8 +121,10 @@ namespace FujiyReader.UWP.UI
             deferral.Complete();
         }
 
-        protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
+            await InitializePocketClient();
+
             var rootFrame = new Frame();
             rootFrame.Navigate(typeof(ShareTarget), args.ShareOperation);
             Window.Current.Content = rootFrame;
