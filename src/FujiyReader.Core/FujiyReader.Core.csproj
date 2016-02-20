@@ -107,6 +107,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArticleContentVerticalPosition.cs" />
     <Compile Include="FujiyReaderClient.cs" />
     <Compile Include="JsonStorage.cs" />
     <Compile Include="OfflineContent.cs" />

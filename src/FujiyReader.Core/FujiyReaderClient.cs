@@ -46,8 +46,8 @@ namespace FujiyReader.Core
             }
         }
 
-        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-        Windows.Storage.StorageFolder localCacheFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+        ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+        StorageFolder localCacheFolder = ApplicationData.Current.LocalFolder;
 
         private FujiyReaderClient() { }
 
@@ -134,12 +134,12 @@ namespace FujiyReader.Core
             return content ?? Enumerable.Empty<PocketItemWithContent>();
         }
 
-        public async Task<PocketItemWithContent> GetLocalStorageItem(string id)
-        {
-            PocketItemWithContent content = (await JsonStorage.ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent))?.SingleOrDefault(x => x.ID == id);
+        //public async Task<PocketItemWithContent> GetLocalStorageItem(string id)
+        //{
+        //    PocketItemWithContent content = (await JsonStorage.ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent))?.SingleOrDefault(x => x.ID == id);
 
-            return content;
-        }
+        //    return content;
+        //}
 
         public Task SetLocalStorageItems(IEnumerable<PocketItemWithContent> value)
         {

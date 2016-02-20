@@ -1,4 +1,5 @@
 ﻿using FujiyReader.Core;
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -76,11 +77,12 @@ namespace FujiyReader.UWP.UI
             }
         }
 
-        public static void WebView_NavigationCompleted(WebView sender, PocketItemWithContent item)
+        public static async void WebView_NavigationCompleted(WebView sender, PocketItemWithContent item)
         {
-            if (item.ScrollVerticalPosition > 0)
+            int verticalPosition = ArticleContentVerticalPosition.GetVerticalPosition(item);
+            if (verticalPosition > 0)
             {
-                sender.InvokeScriptAsync("SetScrollPosition", new string[] { "0", item.ScrollVerticalPosition.ToString() });
+                await sender.InvokeScriptAsync("SetScrollPosition", new string[] { "0", verticalPosition.ToString() }).AsTask();
             }
         }
 
@@ -90,7 +92,7 @@ namespace FujiyReader.UWP.UI
             var x = double.Parse(Coordinates[0]);
             var y = (int)double.Parse(Coordinates[1]);
 
-            item.ScrollVerticalPosition = y;
+            ArticleContentVerticalPosition.SetVerticalPosition(item, y);
         }
     }
 }

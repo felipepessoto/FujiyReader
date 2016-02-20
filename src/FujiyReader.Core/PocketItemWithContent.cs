@@ -8,20 +8,9 @@ using System.Threading.Tasks;
 
 namespace FujiyReader.Core
 {
+    //TODO apagar esta classe
     public class PocketItemWithContent : PocketItem
     {
-        private int scrollVerticalPosition;
-
-        public int ScrollVerticalPosition
-        {
-            get { return scrollVerticalPosition; }
-            set
-            {
-                scrollVerticalPosition = value;
-                OnPropertyChanged();
-            }
-        }
-
         public static async Task<PocketItemWithContent> FromPocketItem(FujiyReaderClient client, PocketItem item, bool forceRefresh)
         {
             //TODO verificar props read only
@@ -55,8 +44,6 @@ namespace FujiyReader.Core
                 Uri = item.Uri,
                 Videos = item.Videos,
                 WordCount = item.WordCount,
-
-                ScrollVerticalPosition = ((await client.GetLocalStorageItem(item.ID))?.ScrollVerticalPosition).GetValueOrDefault(),
             };
 
             return itemWithContent;
