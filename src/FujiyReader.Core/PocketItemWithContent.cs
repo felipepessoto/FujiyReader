@@ -10,18 +10,6 @@ namespace FujiyReader.Core
 {
     public class PocketItemWithContent : PocketItem
     {
-        private string content;
-
-        public string Content
-        {
-            get { return content; }
-            set
-            {
-                content = value;
-                OnPropertyChanged();
-            }
-        }
-
         private int scrollVerticalPosition;
 
         public int ScrollVerticalPosition
@@ -33,19 +21,6 @@ namespace FujiyReader.Core
                 OnPropertyChanged();
             }
         }
-
-        private static async Task LoadContent(FujiyReaderClient client, PocketItemWithContent item, bool forceRefresh)
-        {
-            try
-            {
-                item.Content = (await client.GetArticle(item, forceRefresh: forceRefresh)).Content;
-            }
-            catch (Exception)
-            {
-                //content = "Error to load the article :(";
-            }
-        }
-
 
         public static async Task<PocketItemWithContent> FromPocketItem(FujiyReaderClient client, PocketItem item, bool forceRefresh)
         {
@@ -83,8 +58,6 @@ namespace FujiyReader.Core
 
                 ScrollVerticalPosition = ((await client.GetLocalStorageItem(item.ID))?.ScrollVerticalPosition).GetValueOrDefault(),
             };
-
-            LoadContent(client, itemWithContent, forceRefresh);
 
             return itemWithContent;
         }

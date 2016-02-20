@@ -19,13 +19,13 @@ namespace FujiyReader.UWP.UI
         // Using a DependencyProperty as the backing store for HTML.  This enables animation, styling, binding, etc... 
         public static readonly DependencyProperty HTMLProperty = DependencyProperty.RegisterAttached("HTML", typeof(PocketItemWithContent), typeof(WebViewHtmlExtension), new PropertyMetadata("", new PropertyChangedCallback(OnHTMLChanged)));
 
-        private static void OnHTMLChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static async void OnHTMLChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             WebView wv = d as WebView;
             var item = (PocketItemWithContent)e.NewValue;
             if (wv != null && item != null)
             {
-
+                string htmlContent = (await App.PocketClient.GetArticle(item, forceRefresh: false)).Content;
 
                 //                < style >
                 //    * {
@@ -67,7 +67,7 @@ namespace FujiyReader.UWP.UI
 <body>
 <h1>" + item.Title + @"</h1>
 <a target=""_blank"" style=""text-decoration: none;"" href=" + item.Uri + ">" + item.Uri.Host + @"</a>
-" + item.Content + @"
+" + htmlContent + @"
 
 </body>
 </html>

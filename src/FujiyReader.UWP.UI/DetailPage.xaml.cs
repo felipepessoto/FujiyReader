@@ -42,7 +42,7 @@ namespace FujiyReader.UWP.UI
 
             if (Item == null)
             {
-                Item = new PocketItemWithContent() { Content = "" };
+                Item = new PocketItemWithContent();
             }
 
             MainPageViewModel viewModel = (MainPageViewModel)e.Parameter;

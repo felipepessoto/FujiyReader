@@ -163,26 +163,19 @@ namespace FujiyReader.Core
 
         public async Task<PocketArticle> GetArticle(PocketItem item, bool includeImages = true, bool includeVideos = true, bool forceRefresh = false, CancellationToken cancellationToken = default(CancellationToken))
         {
-            StorageFolder articlesFolder = await localCacheFolder.CreateFolderAsync("PocketArticles", CreationCollisionOption.OpenIfExists);
-            string filename = item.ID;
-            bool fileExists = false;
-
             if (forceRefresh == false)
             {
-                fileExists = (await articlesFolder.TryGetItemAsync(filename)) != null;
-            }
-
-            if (fileExists)
-            {
-                PocketArticle cachedContent = await JsonStorage.ExtractFromJsonFile<PocketArticle>(articlesFolder, filename);
-                if (cachedContent != null)
+                var cachedContent = await OfflineContent.GetArticle(item);
+                if(cachedContent != null)
                 {
                     return cachedContent;
                 }
             }
 
             PocketArticle content = await client.GetArticle(item.Uri, includeImages, includeVideos, forceRefresh, cancellationToken);
-            await JsonStorage.SaveToJsonFile(articlesFolder, filename, content);
+
+            await OfflineContent.SaveArticle(content);
+
             return content;
         }
 
