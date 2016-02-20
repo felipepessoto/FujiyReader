@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FujiyReaderClient.cs" />
+    <Compile Include="JsonStorage.cs" />
     <Compile Include="PocketItemWithContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\FujiyReader.Core.rd.xml" />

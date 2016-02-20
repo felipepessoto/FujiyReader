@@ -129,21 +129,21 @@ namespace FujiyReader.Core
 
         public async Task<IEnumerable<PocketItemWithContent>> GetLocalStorageItems()
         {
-            IEnumerable<PocketItemWithContent> content = await ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent);
+            IEnumerable<PocketItemWithContent> content = await JsonStorage.ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent);
 
             return content ?? Enumerable.Empty<PocketItemWithContent>();
         }
 
         public async Task<PocketItemWithContent> GetLocalStorageItem(string id)
         {
-            PocketItemWithContent content = (await ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent))?.SingleOrDefault(x => x.ID == id);
+            PocketItemWithContent content = (await JsonStorage.ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent))?.SingleOrDefault(x => x.ID == id);
 
             return content;
         }
 
         public Task SetLocalStorageItems(IEnumerable<PocketItemWithContent> value)
         {
-            return SaveToJsonFile(localCacheFolder, Local_PocketItemWithContent, value);
+            return JsonStorage.SaveToJsonFile(localCacheFolder, Local_PocketItemWithContent, value);
         }
 
         public Task<IEnumerable<PocketItem>> Get(RetrieveFilter filter, CancellationToken cancellationToken = default(CancellationToken))
@@ -164,7 +164,7 @@ namespace FujiyReader.Core
         public async Task<PocketArticle> GetArticle(PocketItem item, bool includeImages = true, bool includeVideos = true, bool forceRefresh = false, CancellationToken cancellationToken = default(CancellationToken))
         {
             StorageFolder articlesFolder = await localCacheFolder.CreateFolderAsync("PocketArticles", CreationCollisionOption.OpenIfExists);
-            string filename = item.ID;// GenerateFileNameFromUri(uri);
+            string filename = item.ID;
             bool fileExists = false;
 
             if (forceRefresh == false)
@@ -174,7 +174,7 @@ namespace FujiyReader.Core
 
             if (fileExists)
             {
-                PocketArticle cachedContent = await ExtractFromJsonFile<PocketArticle>(articlesFolder, filename);
+                PocketArticle cachedContent = await JsonStorage.ExtractFromJsonFile<PocketArticle>(articlesFolder, filename);
                 if (cachedContent != null)
                 {
                     return cachedContent;
@@ -182,7 +182,7 @@ namespace FujiyReader.Core
             }
 
             PocketArticle content = await client.GetArticle(item.Uri, includeImages, includeVideos, forceRefresh, cancellationToken);
-            await SaveToJsonFile(articlesFolder, filename, content);
+            await JsonStorage.SaveToJsonFile(articlesFolder, filename, content);
             return content;
         }
 
@@ -199,39 +199,6 @@ namespace FujiyReader.Core
         public Task<bool> Delete(string itemId)
         {
             return client.Delete(itemId);
-        }
-
-        private string GenerateFileNameFromUri(Uri uri)
-        {
-            return WebUtility.UrlEncode(uri.ToString());
-        }
-
-        private async Task SaveToJsonFile(StorageFolder folder, string filename, object value)
-        {
-            //using (var stream = await localCacheFolder.OpenStreamForWriteAsync(Local_PocketItemWithContent, CreationCollisionOption.ReplaceExisting))
-            //using (var streamWriter = new StreamWriter(stream))
-            //using (JsonTextWriter jsonwriter = new JsonTextWriter(streamWriter))
-            //{
-            //    var serializer = new JsonSerializer();
-            //    serializer.Serialize(jsonwriter, value);
-            //}
-
-            var localPocketCacheFile = await folder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
-            await FileIO.WriteTextAsync(localPocketCacheFile, JsonConvert.SerializeObject(value));
-        }
-
-        private async Task<T> ExtractFromJsonFile<T>(StorageFolder folder, string filename) where T : class
-        {
-            T content = null;
-            if (await folder.TryGetItemAsync(filename) != null)
-            {
-                using (var stream = new JsonTextReader(new StreamReader(await folder.OpenStreamForReadAsync(filename))))
-                {
-                    content = new JsonSerializer().Deserialize<T>(stream);
-                }
-            }
-
-            return content;
         }
 
         private static Dictionary<string, string> ParseQueryString(string query)
