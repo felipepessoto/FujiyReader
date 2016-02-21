@@ -125,25 +125,25 @@ namespace FujiyReader.Core
             }
         }
 
-        const string Local_PocketItemWithContent = "Local_PocketItemWithContent";
+        const string Local_PocketItem = "Local_PocketItem";
 
-        public async Task<IEnumerable<PocketItemWithContent>> GetLocalStorageItems()
+        public async Task<IEnumerable<PocketItem>> GetLocalStorageItems()
         {
-            IEnumerable<PocketItemWithContent> content = await JsonStorage.ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent);
+            IEnumerable<PocketItem> content = await JsonStorage.ExtractFromJsonFile<IEnumerable<PocketItem>>(localCacheFolder, Local_PocketItem);
 
-            return content ?? Enumerable.Empty<PocketItemWithContent>();
+            return content ?? Enumerable.Empty<PocketItem>();
         }
 
-        //public async Task<PocketItemWithContent> GetLocalStorageItem(string id)
+        //public async Task<PocketItem> GetLocalStorageItem(string id)
         //{
-        //    PocketItemWithContent content = (await JsonStorage.ExtractFromJsonFile<IEnumerable<PocketItemWithContent>>(localCacheFolder, Local_PocketItemWithContent))?.SingleOrDefault(x => x.ID == id);
+        //    PocketItem content = (await JsonStorage.ExtractFromJsonFile<IEnumerable<PocketItem>>(localCacheFolder, Local_PocketItem))?.SingleOrDefault(x => x.ID == id);
 
         //    return content;
         //}
 
-        public Task SetLocalStorageItems(IEnumerable<PocketItemWithContent> value)
+        public Task SetLocalStorageItems(IEnumerable<PocketItem> value)
         {
-            return JsonStorage.SaveToJsonFile(localCacheFolder, Local_PocketItemWithContent, value);
+            return JsonStorage.SaveToJsonFile(localCacheFolder, Local_PocketItem, value);
         }
 
         public Task<IEnumerable<PocketItem>> Get(RetrieveFilter filter, CancellationToken cancellationToken = default(CancellationToken))

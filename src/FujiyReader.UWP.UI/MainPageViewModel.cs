@@ -1,4 +1,5 @@
 ﻿using FujiyReader.Core;
+using PocketSharp.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,16 +40,14 @@ namespace FujiyReader.UWP.UI
         private async Task Initialize()
         {
             var localItems = await App.PocketClient.GetLocalStorageItems();
-            Articles = new ObservableCollection<PocketItemWithContent>(localItems);
-
-            AttachAutoSave(Articles);
+            Articles = new ObservableCollection<PocketItem>(localItems);
         }
 
-        public ObservableCollection<PocketItemWithContent> Articles { get; set; }
+        public ObservableCollection<PocketItem> Articles { get; set; }
 
-        private PocketItemWithContent lastSelectedItem;
+        private PocketItem lastSelectedItem;
 
-        public PocketItemWithContent LastSelectedItem
+        public PocketItem LastSelectedItem
         {
             get { return lastSelectedItem; }
             set
@@ -58,8 +57,9 @@ namespace FujiyReader.UWP.UI
             }
         }
 
-        public PocketItemWithContent ContextMenuItem { get; set; }
+        public PocketItem ContextMenuItem { get; set; }
 
+        //TODO mover pra OfflineContent class
         public DateTimeOffset LastSync
         {
             get
@@ -97,17 +97,9 @@ namespace FujiyReader.UWP.UI
 
                 var items = await App.PocketClient.Get();
 
-                List<PocketItemWithContent> itemsWithContent = new List<PocketItemWithContent>();
-
-                foreach (var item in items)
-                {
-                    var itemWithContent = await PocketItemWithContent.FromPocketItem(App.PocketClient, item, false);
-                    itemsWithContent.Add(itemWithContent);
-                }
-
                 Articles.Clear();
 
-                foreach (var item in itemsWithContent)
+                foreach (var item in items)
                 {
                     Articles.Add(item);
                 }
@@ -115,8 +107,6 @@ namespace FujiyReader.UWP.UI
                 await SaveToLocalStorage();
 
                 LastSync = DateTimeOffset.Now;
-
-                AttachAutoSave(Articles);
             }
             finally
             {
@@ -136,14 +126,6 @@ namespace FujiyReader.UWP.UI
             var item = ContextMenuItem;
 
             return App.PocketClient.Delete(item.ID);
-        }
-
-        private void AttachAutoSave(IEnumerable<PocketItemWithContent> items)
-        {
-            foreach (var item in items)
-            {
-                item.PropertyChanged += Item_PropertyChanged;
-            }
         }
 
         static SemaphoreSlim semaphoreQueue = new SemaphoreSlim(2, 2);

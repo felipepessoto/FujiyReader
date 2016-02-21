@@ -1,4 +1,5 @@
 ﻿using FujiyReader.Core;
+using PocketSharp.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -72,7 +73,7 @@ namespace FujiyReader.UWP.UI
 
         private void MasterListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var clickedItem = (PocketItemWithContent)e.ClickedItem;
+            var clickedItem = (PocketItem)e.ClickedItem;
             ViewModel.LastSelectedItem = clickedItem;
 
             if (AdaptiveStates.CurrentState == NarrowState)
@@ -103,12 +104,12 @@ namespace FujiyReader.UWP.UI
 
         private void WebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            WebViewHtmlExtension.WebView_NavigationCompleted(sender, (PocketItemWithContent)sender.DataContext);
+            WebViewHtmlExtension.WebView_NavigationCompleted(sender, (PocketItem)sender.DataContext);
         }
 
         private void WebView_ScriptNotify(object sender, NotifyEventArgs e)
         {
-            WebViewHtmlExtension.WebView_ScriptNotify((PocketItemWithContent)((WebView)sender).DataContext, e);
+            WebViewHtmlExtension.WebView_ScriptNotify((PocketItem)((WebView)sender).DataContext, e);
         }
 
         private bool _IsShiftPressed = false;
@@ -129,10 +130,10 @@ namespace FujiyReader.UWP.UI
             {
                 var FocusedElement = FocusManager.GetFocusedElement() as UIElement;
 
-                PocketItemWithContent MyObject = null;
+                PocketItem MyObject = null;
                 if (FocusedElement is ContentControl)
                 {
-                    MyObject = ((ContentControl)FocusedElement).Content as PocketItemWithContent;
+                    MyObject = ((ContentControl)FocusedElement).Content as PocketItem;
                 }
                 ShowContextMenu(MyObject, FocusedElement, new Point(0, 0));
                 e.Handled = true;
@@ -142,10 +143,10 @@ namespace FujiyReader.UWP.UI
             else if (e.Key == Windows.System.VirtualKey.Application)
             {
                 var FocusedElement = FocusManager.GetFocusedElement() as UIElement;
-                PocketItemWithContent MyObject = null;
+                PocketItem MyObject = null;
                 if (FocusedElement is ContentControl)
                 {
-                    MyObject = ((ContentControl)FocusedElement).Content as PocketItemWithContent;
+                    MyObject = ((ContentControl)FocusedElement).Content as PocketItem;
                 }
                 ShowContextMenu(MyObject, FocusedElement, new Point(0, 0));
                 e.Handled = true;
@@ -171,7 +172,7 @@ namespace FujiyReader.UWP.UI
             {
                 var PointerPosition = e.GetPosition(null);
 
-                var MyObject = (e.OriginalSource as FrameworkElement).DataContext as PocketItemWithContent;
+                var MyObject = (e.OriginalSource as FrameworkElement).DataContext as PocketItem;
                 ShowContextMenu(MyObject, null, PointerPosition);
                 e.Handled = true;
 
@@ -202,7 +203,7 @@ namespace FujiyReader.UWP.UI
         {
             if (_IsPointerPressed)
             {
-                var MyObject = (e.OriginalSource as FrameworkElement).DataContext as PocketItemWithContent;
+                var MyObject = (e.OriginalSource as FrameworkElement).DataContext as PocketItem;
 
                 ShowContextMenu(MyObject, null, e.GetPosition(null));
                 e.Handled = true;
@@ -211,7 +212,7 @@ namespace FujiyReader.UWP.UI
             base.OnRightTapped(e);
         }
 
-        private void ShowContextMenu(PocketItemWithContent data, UIElement target, Point offset)
+        private void ShowContextMenu(PocketItem data, UIElement target, Point offset)
         {
             ViewModel.ContextMenuItem = data;
 

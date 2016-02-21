@@ -111,9 +111,14 @@
     <Compile Include="FujiyReaderClient.cs" />
     <Compile Include="JsonStorage.cs" />
     <Compile Include="OfflineContent.cs" />
-    <Compile Include="PocketItemWithContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\FujiyReader.Core.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\PocketSharp\PocketSharp\PocketSharp.csproj">
+      <Project>{817200c3-a327-4e35-9b5f-63a51c088577}</Project>
+      <Name>PocketSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

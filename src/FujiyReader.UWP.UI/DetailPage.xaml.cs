@@ -1,4 +1,5 @@
 ﻿using FujiyReader.Core;
+using PocketSharp.Models;
 using System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -15,16 +16,16 @@ namespace FujiyReader.UWP.UI
     /// </summary>
     public sealed partial class DetailPage : Page
     {
-        private static DependencyProperty s_itemProperty = DependencyProperty.Register("Item", typeof(PocketItemWithContent), typeof(DetailPage), new PropertyMetadata(null));
+        private static DependencyProperty s_itemProperty = DependencyProperty.Register("Item", typeof(PocketItem), typeof(DetailPage), new PropertyMetadata(null));
 
         public static DependencyProperty ItemProperty
         {
             get { return s_itemProperty; }
         }
 
-        public PocketItemWithContent Item
+        public PocketItem Item
         {
-            get { return (PocketItemWithContent)GetValue(s_itemProperty); }
+            get { return (PocketItem)GetValue(s_itemProperty); }
             set { SetValue(s_itemProperty, value); }
         }
 
@@ -37,12 +38,9 @@ namespace FujiyReader.UWP.UI
         {
             base.OnNavigatedTo(e);
 
-            // Parameter is item ID
-            //Item = PocketItemWithContent.FromItem(ItemsDataSource.GetItemById((int)e.Parameter));
-
             if (Item == null)
             {
-                Item = new PocketItemWithContent();
+                Item = new PocketItem();
             }
 
             MainPageViewModel viewModel = (MainPageViewModel)e.Parameter;

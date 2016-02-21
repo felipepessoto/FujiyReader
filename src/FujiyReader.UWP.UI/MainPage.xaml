@@ -5,7 +5,7 @@
     xmlns:local="using:FujiyReader.UWP.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:pocketsharp="using:FujiyReader.Core"
+    xmlns:pocketsharp="using:PocketSharp.Models"
     mc:Ignorable="d"
     NavigationCacheMode="Enabled"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -17,7 +17,7 @@
     </Page.Transitions>
 
     <Page.Resources>
-        <DataTemplate x:Key="MasterListViewItemTemplate" x:DataType="pocketsharp:PocketItemWithContent">
+        <DataTemplate x:Key="MasterListViewItemTemplate" x:DataType="pocketsharp:PocketItem">
             <Grid Margin="0,11,0,13">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -45,7 +45,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="DetailContentTemplate" x:DataType="pocketsharp:PocketItemWithContent">
+        <DataTemplate x:Key="DetailContentTemplate" x:DataType="pocketsharp:PocketItem">
             <Grid>
                 <WebView Name="DetailContentTemplateWebView" local:WebViewHtmlExtension.HTML="{x:Bind}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationCompleted="WebView_NavigationCompleted" ScriptNotify="WebView_ScriptNotify" />
             </Grid>

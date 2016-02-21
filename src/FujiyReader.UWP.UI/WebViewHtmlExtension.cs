@@ -1,4 +1,5 @@
 ﻿using FujiyReader.Core;
+using PocketSharp.Models;
 using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -7,23 +8,23 @@ namespace FujiyReader.UWP.UI
 {
     public class WebViewHtmlExtension
     {
-        public static PocketItemWithContent GetHTML(DependencyObject obj)
+        public static PocketItem GetHTML(DependencyObject obj)
         {
-            return (PocketItemWithContent)obj.GetValue(HTMLProperty);
+            return (PocketItem)obj.GetValue(HTMLProperty);
         }
 
-        public static void SetHTML(DependencyObject obj, PocketItemWithContent value)
+        public static void SetHTML(DependencyObject obj, PocketItem value)
         {
             obj.SetValue(HTMLProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for HTML.  This enables animation, styling, binding, etc... 
-        public static readonly DependencyProperty HTMLProperty = DependencyProperty.RegisterAttached("HTML", typeof(PocketItemWithContent), typeof(WebViewHtmlExtension), new PropertyMetadata("", new PropertyChangedCallback(OnHTMLChanged)));
+        public static readonly DependencyProperty HTMLProperty = DependencyProperty.RegisterAttached("HTML", typeof(PocketItem), typeof(WebViewHtmlExtension), new PropertyMetadata("", new PropertyChangedCallback(OnHTMLChanged)));
 
         private static async void OnHTMLChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             WebView wv = d as WebView;
-            var item = (PocketItemWithContent)e.NewValue;
+            var item = (PocketItem)e.NewValue;
             if (wv != null && item != null)
             {
                 string htmlContent = (await App.PocketClient.GetArticle(item, forceRefresh: false)).Content;
@@ -77,7 +78,7 @@ namespace FujiyReader.UWP.UI
             }
         }
 
-        public static async void WebView_NavigationCompleted(WebView sender, PocketItemWithContent item)
+        public static async void WebView_NavigationCompleted(WebView sender, PocketItem item)
         {
             int verticalPosition = ArticleContentVerticalPosition.GetVerticalPosition(item);
             if (verticalPosition > 0)
@@ -86,7 +87,7 @@ namespace FujiyReader.UWP.UI
             }
         }
 
-        public static void WebView_ScriptNotify(PocketItemWithContent item, NotifyEventArgs e)
+        public static void WebView_ScriptNotify(PocketItem item, NotifyEventArgs e)
         {
             string[] Coordinates = e.Value.Split(',');
             var x = double.Parse(Coordinates[0]);

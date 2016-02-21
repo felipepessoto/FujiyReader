@@ -154,6 +154,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\PocketSharp\PocketSharp\PocketSharp.csproj">
+      <Project>{817200c3-a327-4e35-9b5f-63a51c088577}</Project>
+      <Name>PocketSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FujiyReader.Core\FujiyReader.Core.csproj">
       <Project>{beac4f62-1368-4db7-8942-83702aa8b389}</Project>
       <Name>FujiyReader.Core</Name>
