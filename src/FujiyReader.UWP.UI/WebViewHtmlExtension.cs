@@ -1,6 +1,7 @@
 ﻿using FujiyReader.Core;
 using PocketSharp.Models;
 using System;
+using Windows.Foundation.Metadata;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -41,6 +42,9 @@ namespace FujiyReader.UWP.UI
                 //                    height: auto;
                 //                }
                 //</ style >
+
+                var em = DeviceDetection.DetectPlatform() == Platform.Windows ? 1 : 3;
+
                 string content = @"<!DOCTYPE html>
 <html>
 <head>
@@ -49,7 +53,7 @@ namespace FujiyReader.UWP.UI
     html {
         overflow: initial;
         -ms-text-size-adjust: none;
-        font-size: 3em;
+        font-size: "+ em + @"em;
     }
     body {
         margin: 0;

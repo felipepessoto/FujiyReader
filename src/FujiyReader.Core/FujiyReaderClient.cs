@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
 
@@ -19,8 +20,16 @@ namespace FujiyReader.Core
     public class FujiyReaderClient
     {
         PocketClient client;
-        //private const string consumerKey = "49510-2b106efad3cb48ae12eab7f9";//Desktop
-        private const string consumerKey = "49510-89dd4b9e7a7314b66f780da3";//Mobile
+        private const string consumerKeyDesktop = "49510-2b106efad3cb48ae12eab7f9";//Desktop
+        private const string consumerKeyMobile = "49510-89dd4b9e7a7314b66f780da3";//Mobile
+
+        private string ConsumerKey
+        {
+            get
+            {
+                return DeviceDetection.DetectPlatform() == Platform.Windows ? consumerKeyDesktop : consumerKeyMobile;
+            }
+        }
 
         private string AccessToken
         {
@@ -67,7 +76,7 @@ namespace FujiyReader.Core
                 await Auth();
             }
 
-            client = new PocketClient(consumerKey, AccessToken, parserUri: new Uri("http://text.getpocket.com/v3/text"));
+            client = new PocketClient(ConsumerKey, AccessToken, parserUri: new Uri("http://text.getpocket.com/v3/text"));
         }
 
         public async Task Auth()
@@ -80,7 +89,7 @@ namespace FujiyReader.Core
 
                 var content = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("consumer_key", consumerKey),
+                new KeyValuePair<string, string>("consumer_key", ConsumerKey),
                 new KeyValuePair<string, string>("redirect_uri", callback)
             });
 
@@ -102,7 +111,7 @@ namespace FujiyReader.Core
 
                     var content = new FormUrlEncodedContent(new[]
                 {
-                new KeyValuePair<string, string>("consumer_key", consumerKey),
+                new KeyValuePair<string, string>("consumer_key", ConsumerKey),
                 new KeyValuePair<string, string>("code", accessCode)
             });
 
