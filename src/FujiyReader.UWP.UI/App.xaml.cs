@@ -1,4 +1,5 @@
 ﻿using FujiyReader.Core;
+using PocketSharp;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -42,7 +43,7 @@ namespace FujiyReader.UWP.UI
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             await InitializePocketClient();
-            HandleNetworkError();
+            HandleErrors();
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -82,11 +83,18 @@ namespace FujiyReader.UWP.UI
             Window.Current.Activate();
         }
 
-        private void HandleNetworkError()
+        private async void HandleErrors()
         {
             UnhandledException += async (sender, e) =>
             {
                 Exception ex = e.Exception;
+
+                var pocketException = ex as PocketException;
+                if(pocketException != null && pocketException.PocketErrorCode == 107)
+                {
+                    e.Handled = true;
+                    await PocketClient.Auth();
+                }
 
                 while(ex is HttpRequestException == false && ex.InnerException != null)
                 {
