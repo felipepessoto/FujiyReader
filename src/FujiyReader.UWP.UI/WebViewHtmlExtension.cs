@@ -1,6 +1,7 @@
 ﻿using FujiyReader.Core;
 using PocketSharp.Models;
 using System;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -47,12 +48,22 @@ namespace FujiyReader.UWP.UI
 <style>
     html {
         overflow: initial;
+        -ms-text-size-adjust: none;
+        font-size: 3em;
+    }
+    body {
+        margin: 0;
+        width: 100%;
     }
     a { color: inherit; }
     img {
         max-width: 100% !important;
     }
+    #body-wrapper {
+        overflow-x: auto;
+    }
 </style>
+
 <script>
   window.onscroll = GetScrollPosition;
 
@@ -67,13 +78,16 @@ namespace FujiyReader.UWP.UI
 </script>
 </head>
 <body>
+    <div id=""body-wrapper"">
 <h1>" + item.Title + @"</h1>
 <a target=""_blank"" style=""text-decoration: none;"" href=" + item.Uri + ">" + item.Uri.Host + @"</a>
 " + htmlContent + @"
-
+<script type=""text/javascript"">for (var i = 0; i < document.links.length; i++) { document.links[i].onclick = function() { window.external.notify('LaunchLink:' + this.href); return false; } }</script>
+    </div>
 </body>
 </html>
 ";
+                //<script type=""text/javascript"">for (var i = 0; i < document.links.length; i++) { document.links[i].target = ""_blank"" }</script>
                 wv.NavigateToString(content);
             }
         }
@@ -87,9 +101,25 @@ namespace FujiyReader.UWP.UI
             }
         }
 
-        public static void WebView_ScriptNotify(PocketItem item, NotifyEventArgs e)
+        public static async void WebView_ScriptNotify(PocketItem item, NotifyEventArgs e)
         {
-            string[] Coordinates = e.Value.Split(',');
+            string data = e.Value;
+
+            if (data.ToLower().StartsWith("launchlink:"))
+            {
+                try
+                {
+                    await Launcher.LaunchUriAsync(new Uri(data.Substring("launchlink:".Length), UriKind.Absolute));
+                }
+                catch (Exception)
+                {
+                    //TODO Could not build a proper Uri. Abandon.
+                }
+                return;
+            }
+
+
+            string[] Coordinates = data.Split(',');
             var x = double.Parse(Coordinates[0]);
             var y = (int)double.Parse(Coordinates[1]);
 
