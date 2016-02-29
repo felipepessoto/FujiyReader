@@ -155,15 +155,15 @@ namespace FujiyReader.Core
             return JsonStorage.SaveToJsonFile(localCacheFolder, Local_PocketItem, value);
         }
 
-        public Task<IEnumerable<PocketItem>> Get(RetrieveFilter filter, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return client.Get(filter, cancellationToken);
-        }
+        //public Task<IEnumerable<PocketItem>> Get(RetrieveFilter filter, CancellationToken cancellationToken = default(CancellationToken))
+        //{
+        //    return client.Get(filter, cancellationToken);
+        //}
 
-        public Task<PocketItem> Get(string itemID, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return client.Get(itemID, cancellationToken);
-        }
+        //public Task<PocketItem> Get(string itemID, CancellationToken cancellationToken = default(CancellationToken))
+        //{
+        //    return client.Get(itemID, cancellationToken);
+        //}
 
         public Task<IEnumerable<PocketItem>> Get(State? state = default(State?), bool? favorite = default(bool?), string tag = null, ContentType? contentType = default(ContentType?), Sort? sort = default(Sort?), string search = null, string domain = null, DateTime? since = default(DateTime?), int? count = default(int?), int? offset = default(int?), CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -188,9 +188,9 @@ namespace FujiyReader.Core
             return content;
         }
 
-        public Task<PocketItem> Add(Uri uri)
+        public Task<PocketItem> Add(Uri uri, string[] tags = null, string title = null, string tweetID = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return client.Add(uri);
+            return client.Add(uri, tags, title, tweetID, cancellationToken);
         }
 
         public Task<bool> MarkRead(string itemId)

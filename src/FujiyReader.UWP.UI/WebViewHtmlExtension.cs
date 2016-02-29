@@ -25,6 +25,7 @@ namespace FujiyReader.UWP.UI
 
         private static async void OnHTMLChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            //TODO, está sendo chamado duas vezes, porque esta nos dois layout. E as vezes da erro ao acessar o arquivo de cache em disco com o conteudo html
             WebView wv = d as WebView;
             var item = (PocketItem)e.NewValue;
             if (wv != null && item != null)

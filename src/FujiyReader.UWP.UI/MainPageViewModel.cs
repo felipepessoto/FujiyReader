@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.UI.Xaml.Controls;
 
 namespace FujiyReader.UWP.UI
 {
@@ -70,6 +71,13 @@ namespace FujiyReader.UWP.UI
             {
                 localSettings.Values["last_sync"] = value;
             }
+        }
+
+        public Action AddCommand;
+
+        public void Add()
+        {
+            AddCommand?.Invoke();
         }
 
         private bool canSync = true;

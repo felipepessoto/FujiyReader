@@ -36,6 +36,7 @@ namespace FujiyReader.UWP.UI
             if (ViewModel == null)
             {
                 ViewModel = await MainPageViewModel.Create();
+                ViewModel.AddCommand += () => { Frame.Navigate(typeof(AddContent), null, new DrillInNavigationTransitionInfo()); };
                 if (ViewModel.LastSync < DateTimeOffset.Now.AddHours(-1))
                 {
                     await ViewModel.Sync();
